@@ -129,7 +129,9 @@ class Message(BaleObject):
 
         Also sets the `replied_to` field to the full replied message for easier access.
         """
-        if self.quoted_replied_to and not self.quoted_replied_to.chat:
+        if self.quoted_replied_to:
+            if not self.quoted_replied_to.chat:
+                self.quoted_replied_to.chat = self.chat
             if not self.replied_to:
                 self.replied_to = self.quoted_replied_to.message
 

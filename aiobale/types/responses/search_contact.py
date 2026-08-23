@@ -31,7 +31,7 @@ class ContactResponse(BaleObject):
             __pydantic__self__,
             *,
             user: Optional[InfoPeer] = None,
-            chat: Optional[InfoPeer] = None,
+            group: Optional[InfoPeer] = None,
             **__pydantic_kwargs,
         ) -> None:
-            super().__init__(user=user, chat=chat, **__pydantic_kwargs)
+            super().__init__(user=user, group=group, **__pydantic_kwargs)

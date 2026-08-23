@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مستندات جامع Aiobale | فریم‌ورک مدرن و ناهمگام پیام‌رسان بله</title>
+  <meta name="description" content="مستندات رسمی و کامل کتابخانه Aiobale - فریم‌ورک پایتون مدرن، سریع و ناهمگام بر پایه Asyncio برای ساخت ربات و کلاینت در پیام‌رسان بله.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header class="top-header">
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <button id="menu-toggle" class="icon-btn menu-toggle" aria-label="منو">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+      </button>
+      <a href="#getting-started" class="header-brand">
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+        </div>
+        <span class="brand-title">Aiobale</span>
+        <span class="brand-badge">v1.2.0</span>
+      </a>
+    </div>
+
+    <div class="header-actions">
+      <button id="search-btn" class="search-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <span>جستجو در مستندات...</span>
+        <kbd>Ctrl+K</kbd>
+      </button>
+
+      <button id="theme-toggle" class="icon-btn" title="تغییر تم">
+        <svg id="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/></svg>
+        <svg id="moon-icon" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+      </button>
+
+      <a href="https://github.com/aminmadaniofficial/aiobale" target="_blank" rel="noopener noreferrer" class="icon-btn" title="گیت‌هاب">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+      </a>
+    </div>
+  </header>
+
+  <!-- Search Modal -->
+  <div id="search-modal" class="modal-backdrop">
+    <div class="search-modal">
+      <div class="search-input-wrapper">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="search-input" class="search-input" placeholder="جستجوی متدها، تایپ‌ها، فیلترها و مثال‌ها..." autocomplete="off">
+      </div>
+      <ul id="search-results" class="search-results"></ul>
+    </div>
+  </div>
+
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/></svg>
+          شروع کار (Getting Started)
+        </div>
+        <ul class="sidebar-links">
+          <li><a href="#getting-started" class="sidebar-link active"><span class="sidebar-link-content">معرفی Aiobale</span></a></li>
+          <li><a href="#installation" class="sidebar-link"><span class="sidebar-link-content">نصب و پیش‌نیازها</span></a></li>
+          <li><a href="#quickstart" class="sidebar-link"><span class="sidebar-link-content">شروع سریع در ۵ دقیقه</span></a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/></svg>
+          احراز هویت و سشن
+        </div>
+        <ul class="sidebar-links">
+          <li><a href="#authentication" class="sidebar-link"><span class="sidebar-link-content">روش‌های ورود (Auth)</span></a></li>
+          <li><a href="#phone-login" class="sidebar-link"><span class="sidebar-link-content">ورود با CLI و تلفن</span></a></li>
+          <li><a href="#token-auth" class="sidebar-link"><span class="sidebar-link-content">ورود با توکن و سشن</span></a></li>
+          <li><a href="#headless-auth" class="sidebar-link"><span class="sidebar-link-content">محیط‌های Headless و داکر</span></a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="16" x="4" y="4" rx="2"/></svg>
+          هسته و چرخه حیات
+        </div>
+        <ul class="sidebar-links">
+          <li><a href="#client-architecture" class="sidebar-link"><span class="sidebar-link-content">معماری کلاینت (Client)</span></a></li>
+          <li><a href="#client-config" class="sidebar-link"><span class="sidebar-link-content">پارامترهای کانفیگ</span></a></li>
+          <li><a href="#client-reconnect" class="sidebar-link"><span class="sidebar-link-content">اتصال مجدد خودکار</span></a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/></svg>
+          دیسپچر و رویدادها
+        </div>
+        <ul class="sidebar-links">
+          <li><a href="#dispatcher" class="sidebar-link"><span class="sidebar-link-content">سیستم دیسپچر (Dispatcher)</span></a></li>
+          <li><a href="#dp-handlers" class="sidebar-link"><span class="sidebar-link-content">انواع رویدادها (Events)</span></a></li>
+          <li><a href="#routers" class="sidebar-link"><span class="sidebar-link-content">روترهای ماژولار (Router)</span></a></li>
+          <li><a href="#dependency-injection" class="sidebar-link"><span class="sidebar-link-content">تزریق وابستگی (DI)</span></a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+          فیلترها و Magic Filter
+        </div>
+        <ul class="sidebar-links">
+          <li><a href="#filters" class="sidebar-link"><span class="sidebar-link-content">معماری فیلترها</span></a></li>
+          <li><a href="#magic-filter" class="sidebar-link"><span class="sidebar-link-content">مجیک فیلتر F</span></a></li>
+          <li><a href="#builtin-filters" class="sidebar-link"><span class="sidebar-link-content">فیلترهای پیش‌ساخته</span></a></li>
+          <li><a href="#logic-filters" class="sidebar-link"><span class="sidebar-link-content">ترکیب منطقی (and/or/not)</span></a></li>
+          <li><a href="#custom-filters" class="sidebar-link"><span class="sidebar-link-content">فیلترهای سفارشی</span></a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          مرجع کامل API (RPC)
+        </div>
+        <ul class="sidebar-links">
+          <li><a href="#api-messaging" class="sidebar-link"><span class="sidebar-link-content">پیام‌رسانی (Messaging)</span><span class="sidebar-badge">12</span></a></li>
+          <li><a href="#api-groups" class="sidebar-link"><span class="sidebar-link-content">گروه‌ها و کانال‌ها</span><span class="sidebar-badge">24</span></a></li>
+          <li><a href="#api-users" class="sidebar-link"><span class="sidebar-link-content">کاربران و مخاطبین</span><span class="sidebar-badge">15</span></a></li>
+          <li><a href="#api-presence" class="sidebar-link"><span class="sidebar-link-content">وضعیت و تایپینگ</span><span class="sidebar-badge">3</span></a></li>
+          <li><a href="#api-abacus" class="sidebar-link"><span class="sidebar-link-content">واکنش‌ها و آمار</span><span class="sidebar-badge">5</span></a></li>
+          <li><a href="#api-files" class="sidebar-link"><span class="sidebar-link-content">دانلود و آپلود فایل</span><span class="sidebar-badge">4</span></a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/></svg>
+          تایپ‌ها، مدل‌ها و انام‌ها
+        </div>
+        <ul class="sidebar-links">
+          <li><a href="#types-reference" class="sidebar-link"><span class="sidebar-link-content">کلاس Message و متدها</span></a></li>
+          <li><a href="#type-chat-user" class="sidebar-link"><span class="sidebar-link-content">Chat, User, Member</span></a></li>
+          <li><a href="#enums-reference" class="sidebar-link"><span class="sidebar-link-content">انام‌ها و ثابت‌ها</span></a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/></svg>
+          پروژه‌های عملی (Examples)
+        </div>
+        <ul class="sidebar-links">
+          <li><a href="#example-echo" class="sidebar-link"><span class="sidebar-link-content">۱. ربات اکو و خوشامدگو</span></a></li>
+          <li><a href="#example-admin" class="sidebar-link"><span class="sidebar-link-content">۲. ربات ادمین و ضداسپم</span></a></li>
+          <li><a href="#example-downloader" class="sidebar-link"><span class="sidebar-link-content">۳. ربات دانلودر مدیا</span></a></li>
+          <li><a href="#example-broadcast" class="sidebar-link"><span class="sidebar-link-content">۴. ربات برودکست کانال</span></a></li>
+          <li><a href="#example-routers" class="sidebar-link"><span class="sidebar-link-content">۵. ربات ماژولار چندروتر</span></a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+          عیب‌یابی و استثناها
+        </div>
+        <ul class="sidebar-links">
+          <li><a href="#troubleshooting" class="sidebar-link"><span class="sidebar-link-content">رفع خطاها و راهنما</span></a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- HERO -->
+      <section id="getting-started" class="hero-section">
+        <div class="hero-badge">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          فریم‌ورک مدرن، سریع و رسمی/غیررسمی پیام‌رسان بله
+        </div>
+        <h1 class="hero-title">توسعه سریع و مدرن ربات و کلاینت در <span>پیام‌رسان بله</span> با پایتون</h1>
+        <p class="hero-desc">
+          <strong>Aiobale</strong> یک کتابخانه پیشرفته، کاملاً ناهمگام (Async/Await) و بر پایه پروتکل بومی وب‌سوکت و باینری پروتوباف پیام‌رسان بله است که امکان ساخت انواع ربات‌های کاربری (Userbot)، ربات‌های رسمی، پنل‌های مدیریت خودکار و ابزارهای داده‌کاوی را با بالاترین سرعت و کمترین مصرف منابع فراهم می‌کند.
+        </p>
+
+        <div class="hero-actions">
+          <a href="#quickstart" class="btn btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            شروع سریع
+          </a>
+          <a href="#api-messaging" class="btn btn-secondary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            مشاهده متدهای API
+          </a>
+        </div>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="feature-icon-wrapper">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <h3 class="feature-title">کاملاً Async/Await</h3>
+            <p class="feature-desc">طراحی‌شده بر پایه asyncio پایتون با توان پردازش همزمان هزاران رویداد در ثانیه با حداقل مصرف رم و پردازنده.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon-wrapper">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            </div>
+            <h3 class="feature-title">مجیک فیلتر هوشمند (F)</h3>
+            <p class="feature-desc">فیلترگذاری شبیه به Aiogram با عبارت‌های قدرتمند <code>F.text.startswith(...)</code> و فیلترهای ترکیبی منطقی.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon-wrapper">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="16" x="4" y="4" rx="2"/></svg>
+            </div>
+            <h3 class="feature-title">پوشش ۷۹+ متد RPC</h3>
+            <p class="feature-desc">دسترسی به تمام قابلیت‌های پیام‌رسان بله شامل پیام‌ها، گروه‌ها، کانال‌ها، ری‌اکشن‌ها، فایل‌ها و استاتوس.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon-wrapper">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
+            </div>
+            <h3 class="feature-title">مدل‌های داده Pydantic</h3>
+            <p class="feature-desc">اعتبارسنجی خودکار داده‌ها با تایپ هینتینگ ۱۰۰٪ سازگار با تمامی IDEها نظیر VS Code و PyCharm.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- INSTALLATION -->
+      <section id="installation" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" x2="20" y1="19" y2="19"/></svg>
+            نصب و پیش‌نیازها (Installation)
+          </h2>
+          <p class="section-subtitle">راهنمای راه‌اندازی و نصب کتابخانه Aiobale روی سیستم‌عامل‌های مختلف</p>
+        </div>
+
+        <p>برای استفاده از Aiobale، به پایتون <strong>نسخه 3.8 یا بالاتر</strong> (سازگار تا پایتون 3.14) نیاز دارید.</p>
+
+        <h3 class="sub-heading">نصب با pip</h3>
+        <div class="code-container">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+            <span>Terminal</span>
+            <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+          </div>
+          <pre><code><span class="hl-com"># نصب مستقیم از سورس یا پکیج</span>
+pip install aiobale
+
+<span class="hl-com"># یا نصب با ابزار سریع uv</span>
+uv pip install aiobale</code></pre>
+        </div>
+
+        <div class="alert-card alert-info">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          <div>
+            <strong>نکته توسعه در لینوکس / داکر:</strong> وابستگی‌های اصلی نظیر <code>aiohttp</code>، <code>pydantic</code>، <code>blackboxprotobuf</code> و <code>aiofiles</code> به صورت خودکار نصب می‌شوند.
+          </div>
+        </div>
+      </section>
+
+      <!-- QUICKSTART -->
+      <section id="quickstart" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/></svg>
+            اولین ربات در ۵ دقیقه (Quickstart)
+          </h2>
+          <p class="section-subtitle">ساخت یک ربات اکو (Echo Bot) هوشمند در پیام‌رسان بله</p>
+        </div>
+
+        <p>نمونه کد زیر یک ربات اکو ساده ایجاد می‌کند که به تمام پیام‌های متنی دریافتی پاسخ همان پیام را می‌دهد:</p>
+
+        <div class="code-container">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+            <span>main.py</span>
+            <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+          </div>
+          <pre><code><span class="hl-kw">import</span> asyncio
+<span class="hl-kw">from</span> aiobale <span class="hl-kw">import</span> Client, Dispatcher, F
+<span class="hl-kw">from</span> aiobale.types <span class="hl-kw">import</span> Message
+<span class="hl-kw">from</span> aiobale.filters <span class="hl-kw">import</span> IsText
+
+<span class="hl-com"># ساخت دیسپچر و کلاینت</span>
+dp = Dispatcher()
+client = Client(dp, session_file=<span class="hl-str">"my_bot"</span>)
+
+<span class="hl-dec">@dp.message(F.text == "/start")</span>
+<span class="hl-kw">async def</span> <span class="hl-fn">start_handler</span>(message: Message):
+    <span class="hl-kw">await</span> message.reply(<span class="hl-str">"سلام! به ربات Aiobale خوش آمدید."</span>)
+
+<span class="hl-dec">@dp.message(IsText())</span>
+<span class="hl-kw">async def</span> <span class="hl-fn">echo_handler</span>(message: Message):
+    <span class="hl-kw">await</span> message.reply(<span class="hl-str">f"شما گفتید: {message.text}"</span>)
+
+<span class="hl-kw">async def</span> <span class="hl-fn">main</span>():
+    <span class="hl-kw">print</span>(<span class="hl-str">"در حال اتصال به سرور بله..."</span>)
+    <span class="hl-kw">await</span> client.start()
+
+<span class="hl-kw">if</span> __name__ == <span class="hl-str">"__main__"</span>:
+    asyncio.run(main())</code></pre>
+        </div>
+
+        <p>در اولین اجرای این اسکریپت در ترمینال، کنسول از شما شماره تلفن و کد پیامک‌شده را می‌پرسد و سشن ذخیره می‌شود تا در اجراهای بعدی بدون نیاز به لاگین مجدد متصل شود.</p>
+      </section>
+
+      <!-- AUTHENTICATION -->
+      <section id="authentication" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/></svg>
+            احراز هویت و مدیریت سشن (Authentication)
+          </h2>
+          <p class="section-subtitle">راهنمای انواع روش‌های لاگین، کار با توکن‌ها و فایل‌های سشن</p>
+        </div>
+
+        <h3 id="phone-login" class="sub-heading">۱. ورود تعاملی با CLI و شماره تلفن</h3>
+        <p>اگر توکنی مشخص نکرده باشید و فایل سشن وجود نداشته باشد، کتابخانه به صورت خودکار رابط ترمینالی ورود را فعال می‌کند:</p>
+
+        <div class="code-container">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+            <span>auth_phone.py</span>
+            <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+          </div>
+          <pre><code><span class="hl-kw">from</span> aiobale <span class="hl-kw">import</span> Client
+
+<span class="hl-com"># ذخیره سشن در فایل my_account.bale</span>
+client = Client(session_file=<span class="hl-str">"my_account"</span>)
+<span class="hl-com"># با فراخوانی client.start()، در ترمینال شماره و کد تایید پرسیده می‌شود</span></code></pre>
+        </div>
+
+        <h3 id="token-auth" class="sub-heading">۲. ورود با توکن JWT از پیش موجود</h3>
+        <p>در صورتی که توکن حساب کاربری را دارید، می‌توانید آن را به صورت مستقیم به کلاینت پاس دهید:</p>
+
+        <div class="code-container">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+            <span>token_auth.py</span>
+            <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+          </div>
+          <pre><code><span class="hl-kw">from</span> aiobale <span class="hl-kw">import</span> Client
+
+MY_JWT_TOKEN = <span class="hl-str">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."</span>
+
+<span class="hl-com"># راه‌اندازی با توکن مستقیم بدون نیاز به فایل سشن روی دیسک</span>
+client = Client(session_file=<span class="hl-kw">None</span>, token=MY_JWT_TOKEN)</code></pre>
+        </div>
+
+        <h3 id="headless-auth" class="sub-heading">۳. محیط‌های Headless و داکر (Docker & CI)</h3>
+        <p>در صورتی که برنامه در محیط بدون ورودی ترمینال اجرا شود (مانند Docker یا دیمون‌های پس‌زمینه)، در صورت نبود توکن خطای واضح <code>AiobaleError</code> پرتاب می‌شود تا از فریز شدن پروسس جلوگیری شود.</p>
+      </section>
+
+      <!-- CORE ARCHITECTURE -->
+      <section id="client-architecture" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="16" x="4" y="4" rx="2"/></svg>
+            معماری کلاینت و چرخه حیات (Client Architecture)
+          </h2>
+          <p class="section-subtitle">بررسی کلاس Client، تنظیمات اتصال، پراپرتی‌ها و هندلینگ قطعی اتصال</p>
+        </div>
+
+        <h3 id="client-config" class="sub-heading">پارامترهای کانفیگوریشن کلاینت</h3>
+        <div class="table-wrapper">
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th>پارامتر</th>
+                <th>نوع داده (Type)</th>
+                <th>پیش‌فرض</th>
+                <th>توضیحات</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>dispatcher</code></td>
+                <td><code>Optional[Dispatcher]</code></td>
+                <td><code>None</code></td>
+                <td>آبجکت دیسپچر مسئول مدیریت و هدایت رویدادها</td>
+              </tr>
+              <tr>
+                <td><code>session_file</code></td>
+                <td><code>Union[str, Path, bytes, None]</code></td>
+                <td><code>"./session.bale"</code></td>
+                <td>مسیر فایل ذخیره‌سازی نشست یا <code>None</code> برای نشست حافظه‌ای</td>
+              </tr>
+              <tr>
+                <td><code>token</code></td>
+                <td><code>Optional[str]</code></td>
+                <td><code>None</code></td>
+                <td>توکن JWT معتبر جهت اتصال مستقیم</td>
+              </tr>
+              <tr>
+                <td><code>user_agent</code></td>
+                <td><code>Optional[str]</code></td>
+                <td><code>None</code></td>
+                <td>عنوان کلاینت یا User-Agent اختصاصی</td>
+              </tr>
+              <tr>
+                <td><code>show_update_errors</code></td>
+                <td><code>bool</code></td>
+                <td><code>False</code></td>
+                <td>نمایش خطاهای رخ‌داده در جریان پردازش آپدیت‌ها در لاگ</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 id="client-reconnect" class="sub-heading">چرخه حیات و متدهای کلاینت</h3>
+        <div class="table-wrapper">
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th>متد / پراپرتی</th>
+                <th>نوع</th>
+                <th>توضیحات</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>client.start()</code></td>
+                <td><span class="badge badge-async">async</span></td>
+                <td>برقراری اتصال سوکت، لاگین، دریافت اطلاعات اکانت و آغاز حلقه آپدیت‌ها</td>
+              </tr>
+              <tr>
+                <td><code>client.stop()</code></td>
+                <td><span class="badge badge-async">async</span></td>
+                <td>قطع ایمن سوکت، ذخیره وضعیت و توقف کلاینت</td>
+              </tr>
+              <tr>
+                <td><code>client.me</code></td>
+                <td>پراپرتی</td>
+                <td>آبجکت اطلاعات حساب لاگین‌شده (شامل نام، آیدی، شماره تلفن و...)</td>
+              </tr>
+              <tr>
+                <td><code>client.id</code></td>
+                <td>پراپرتی</td>
+                <td>آیدی عددی کاربر متصل‌شده (در صورت عدم اتصال مقدار <code>None</code>)</td>
+              </tr>
+              <tr>
+                <td><code>client.token</code></td>
+                <td>پراپرتی</td>
+                <td>توکن JWT فعال برای درخواست‌های HTTP و آپلود/دانلود مدیا</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- DISPATCHER -->
+      <section id="dispatcher" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/></svg>
+            دیسپچر و مسیریابی رویدادها (Dispatcher & Routers)
+          </h2>
+          <p class="section-subtitle">سیستم قدرتمند هدایت و دریافت رویدادها با قابلیت ماژولار و تزریق وابستگی</p>
+        </div>
+
+        <h3 id="dp-handlers" class="sub-heading">انواع رویدادهای پشتیبانی‌شده در دیسپچر</h3>
+        <div class="table-wrapper">
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th>دکوراتور هندلر</th>
+                <th>نوع ورودی (Event Object)</th>
+                <th>زمان تحریک (Trigger)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>@dp.message(*filters)</code></td>
+                <td><code>Message</code></td>
+                <td>دریافت پیام جدید در پیوی، گروه یا کانال</td>
+              </tr>
+              <tr>
+                <td><code>@dp.message_edited(*filters)</code></td>
+                <td><code>Message</code></td>
+                <td>ویرایش شدن متن یا کپشن پیام ارسالی قبلی</td>
+              </tr>
+              <tr>
+                <td><code>@dp.message_deleted(*filters)</code></td>
+                <td><code>SelectedMessages</code></td>
+                <td>حذف شدن یک یا چند پیام</td>
+              </tr>
+              <tr>
+                <td><code>@dp.user_blocked(*filters)</code></td>
+                <td><code>UserBlocked</code></td>
+                <td>بلاک شدن کاربر توسط شما یا طرف مقابل</td>
+              </tr>
+              <tr>
+                <td><code>@dp.user_unblocked(*filters)</code></td>
+                <td><code>UserUnblocked</code></td>
+                <td>آنبلاک شدن کاربر</td>
+              </tr>
+              <tr>
+                <td><code>@dp.group_message_pinned(*filters)</code></td>
+                <td><code>PinnedMessage</code></td>
+                <td>پین شدن پیام جدید در گروه یا کانال</td>
+              </tr>
+              <tr>
+                <td><code>@dp.group_pin_removed(*filters)</code></td>
+                <td><code>UnpinnedMessage</code></td>
+                <td>حذف پیام پین‌شده از سرگروه</td>
+              </tr>
+              <tr>
+                <td><code>@dp.username_changed(*filters)</code></td>
+                <td><code>UsernameChanged</code></td>
+                <td>تغییر نام کاربری (آیدی @) گروه یا کانال</td>
+              </tr>
+              <tr>
+                <td><code>@dp.about_changed(*filters)</code></td>
+                <td><code>AboutChanged</code></td>
+                <td>تغییر بیوگرافی یا توضیحات گروه/کانال</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 id="routers" class="sub-heading">ساختار پروژه‌های بزرگ با Router</h3>
+        <p>برای تفکیک کدهای بات در فایل‌های مجزا (مثلاً هندلرهای ادمین، هندلرهای کاربری، هندلرهای مدیا)، از روترها استفاده کنید:</p>
+
+        <div class="code-container">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+            <span>handlers/admin.py</span>
+            <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+          </div>
+          <pre><code><span class="hl-kw">from</span> aiobale <span class="hl-kw">import</span> Router, F
+<span class="hl-kw">from</span> aiobale.types <span class="hl-kw">import</span> Message
+
+admin_router = Router()
+
+<span class="hl-dec">@admin_router.message(F.text == "/panel")</span>
+<span class="hl-kw">async def</span> <span class="hl-fn">admin_panel</span>(msg: Message):
+    <span class="hl-kw">await</span> msg.reply(<span class="hl-str">"به پنل مدیریت خوش آمدید."</span>)</code></pre>
+        </div>
+
+        <div class="code-container">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+            <span>bot.py</span>
+            <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+          </div>
+          <pre><code><span class="hl-kw">from</span> aiobale <span class="hl-kw">import</span> Client, Dispatcher
+<span class="hl-kw">from</span> handlers.admin <span class="hl-kw">import</span> admin_router
+
+dp = Dispatcher()
+<span class="hl-com"># الحاق روتر ادمین به دیسپچر اصلی</span>
+dp.include_router(admin_router)
+
+client = Client(dp, session_file=<span class="hl-str">"bot"</span>)</code></pre>
+        </div>
+
+        <h3 id="dependency-injection" class="sub-heading">تزریق وابستگی خودکار (Dependency Injection)</h3>
+        <p>در هر هندلر می‌توانید علاوه بر آبجکت رویداد (مثلاً <code>msg: Message</code>)، آبجکت <code>client: Client</code> یا هر متغیر دلخواه تزریق‌شده را به عنوان آرگومان تعریف کنید تا سیستم آن را به صورت خودکار مقداردهی کند.</p>
+      </section>
+
+      <!-- FILTERS -->
+      <section id="filters" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            فیلترها و Magic Filter (Filters & F)
+          </h2>
+          <p class="section-subtitle">کنترل دقیق و گزینش هوشمند رویدادها با فیلترهای جادویی و منطقی</p>
+        </div>
+
+        <h3 id="magic-filter" class="sub-heading">استفاده از Magic Filter (`F`)</h3>
+        <p>با آبجکت <code>F</code> می‌توانید بدون نیاز به نوشتن توابع جداگانه، شرط‌های پیچیده را مستقیماً تعریف کنید:</p>
+
+        <div class="code-container">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+            <span>magic_filters.py</span>
+            <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+          </div>
+          <pre><code><span class="hl-kw">from</span> aiobale <span class="hl-kw">import</span> F
+<span class="hl-kw">from</span> aiobale.enums <span class="hl-kw">import</span> ChatType
+
+<span class="hl-com"># تطابق دقیق متن</span>
+<span class="hl-dec">@dp.message(F.text == "ping")</span>
+<span class="hl-kw">async def</span> <span class="hl-fn">on_ping</span>(msg): <span class="hl-kw">await</span> msg.reply(<span class="hl-str">"pong"</span>)
+
+<span class="hl-com"># شروع با پیشوند خاص</span>
+<span class="hl-dec">@dp.message(F.text.startswith("/calc"))</span>
+<span class="hl-kw">async def</span> <span class="hl-fn">on_calc</span>(msg): ...
+
+<span class="hl-com"># شرط روی نوع چت و فرستنده</span>
+<span class="hl-dec">@dp.message(F.chat.type == ChatType.GROUP, F.sender_id == 123456)</span>
+<span class="hl-kw">async def</span> <span class="hl-fn">on_admin_in_group</span>(msg): ...
+
+<span class="hl-com"># بررسی وجود سند یا تصویر</span>
+<span class="hl-dec">@dp.message(F.content.document)</span>
+<span class="hl-kw">async def</span> <span class="hl-fn">on_document</span>(msg): ...</code></pre>
+        </div>
+
+        <h3 id="builtin-filters" class="sub-heading">فیلترهای پیش‌ساخته (Built-in Filters)</h3>
+        <div class="table-wrapper">
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th>فیلتر</th>
+                <th>عملکرد</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>IsText()</code></td>
+                <td>فقط پیام‌های متنی عادی</td>
+              </tr>
+              <tr>
+                <td><code>IsDocument()</code></td>
+                <td>پیام‌های حاوی فایل یا مدیا</td>
+              </tr>
+              <tr>
+                <td><code>IsGift()</code></td>
+                <td>پیام‌های بسته هدیه / عیدی بله</td>
+              </tr>
+              <tr>
+                <td><code>IsPrivate()</code></td>
+                <td>پیام‌های دریافتی از چت‌های دونفره (پیوی)</td>
+              </tr>
+              <tr>
+                <td><code>IsGroupOrChannel()</code></td>
+                <td>پیام‌های گروه‌ها، ابرگروه‌ها یا کانال‌ها</td>
+              </tr>
+              <tr>
+                <td><code>ChatTypeFilter(ChatType.GROUP)</code></td>
+                <td>فیلتر بر اساس نوع اختصاصی چت</td>
+              </tr>
+              <tr>
+                <td><code>RegexFilter(r"^/ban\s+(\d+)")</code></td>
+                <td>استخراج و انطباق عبارات منظم (RegEx)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 id="logic-filters" class="sub-heading">ترکیب منطقی فیلترها (Logic Operators)</h3>
+        <p>با توابع <code>and_f</code>, <code>or_f</code>, <code>invert_f</code> می‌توانید فیلترها را ترکیب کنید:</p>
+
+        <div class="code-container">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+            <span>logic_filter.py</span>
+            <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+          </div>
+          <pre><code><span class="hl-kw">from</span> aiobale.filters <span class="hl-kw">import</span> and_f, or_f, invert_f, IsText, IsPrivate
+
+<span class="hl-com"># پیام متنی باشد و در پیوی باشد</span>
+<span class="hl-dec">@dp.message(and_f(IsText(), IsPrivate()))</span>
+<span class="hl-kw">async def</span> <span class="hl-fn">private_text_only</span>(msg): ...
+
+<span class="hl-com"># پیام غیرمتنی باشد (معکوس کردن)</span>
+<span class="hl-dec">@dp.message(invert_f(IsText()))</span>
+<span class="hl-kw">async def</span> <span class="hl-fn">media_only</span>(msg): ...</code></pre>
+        </div>
+
+        <h3 id="custom-filters" class="sub-heading">ساخت فیلتر سفارشی (Custom Filter)</h3>
+        <div class="code-container">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+            <span>custom_filter.py</span>
+            <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+          </div>
+          <pre><code><span class="hl-kw">from</span> aiobale.filters.base <span class="hl-kw">import</span> Filter
+<span class="hl-kw">from</span> aiobale.types <span class="hl-kw">import</span> Message
+
+<span class="hl-kw">class</span> <span class="hl-type">AdminOnly</span>(Filter):
+    <span class="hl-kw">def __init__</span>(self, admin_ids: list[int]):
+        self.admin_ids = admin_ids
+
+    <span class="hl-kw">async def __call__</span>(self, message: Message) -> bool:
+        <span class="hl-kw">return</span> message.sender_id <span class="hl-kw">in</span> self.admin_ids
+
+<span class="hl-dec">@dp.message(AdminOnly([111222, 333444]))</span>
+<span class="hl-kw">async def</span> <span class="hl-fn">admin_handler</span>(msg: Message):
+    <span class="hl-kw">await</span> msg.reply(<span class="hl-str">"دسترسی ادمین تایید شد."</span>)</code></pre>
+        </div>
+      </section>
+
+      <!-- API MESSAGING -->
+      <section id="api-messaging" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+            مرجع متدهای پیام‌رسانی (Messaging API)
+          </h2>
+          <p class="section-subtitle">ارسال انواع پیام، تصویر، فایل، ویرایش، حذف، پین و تاریخچه چت</p>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th>نام متد</th>
+                <th>نوع</th>
+                <th>پارامترهای اصلی</th>
+                <th>توضیحات</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr id="method-send-message">
+                <td><code>send_message</code></td>
+                <td><span class="badge badge-async">async</span></td>
+                <td><code>chat_id</code>, <code>text</code>, <code>reply_to</code>, <code>quoted_message</code></td>
+                <td>ارسال پیام متنی با پشتیبانی از ریپلای نقل‌قولی</td>
+              </tr>
+              <tr id="method-send-media">
+                <td><code>send_photo / send_document</code></td>
+                <td><span class="badge badge-async">async</span></td>
+                <td><code>chat_id</code>, <code>file</code>, <code>caption</code>, <code>reply_to</code></td>
+                <td>ارسال تصویر یا فایل از مسیر دیسک یا باینری</td>
+              </tr>
+              <tr id="method-send-audio-video">
+                <td><code>send_voice / send_video</code></td>
+                <td><span class="badge badge-async">async</span></td>
+                <td><code>chat_id</code>, <code>file</code>, <code>duration</code>, <code>caption</code></td>
+                <td>ارسال ویس یا ویدیوی پلیر با پیش‌نمایش</td>
+              </tr>
+              <tr id="method-edit-delete-pin">
+                <td><code>update_message</code></td>
+                <td><span class="badge badge-async">async</span></td>
+                <td><code>chat_id</code>, <code>message_id</code>, <code>text</code></td>
+                <td>ویرایش متن پیام ارسال‌شده قبلی</td>
+              </tr>
+              <tr>
+                <td><code>delete_message</code></td>
+                <td><span class="badge badge-async">async</span></td>
+                <td><code>chat_id</code>, <code>message_ids</code></td>
+                <td>حذف یک یا چند پیام برای طرفین</td>
+              </tr>
+              <tr id="method-forward-clear">
+                <td><code>forward_message</code></td>
+                <td><span class="badge badge-async">async</span></td>
+                <td><code>from_chat_id</code>, <code>to_chat_id</code>, <code>message_ids</code></td>
+                <td>فوروارد پیام‌ها به چت دیگر</td>
+              </tr>
+              <tr>
+                <td><code>load_history</code></td>
+                <td><span class="badge badge-async">async</span></td>
+                <td><code>chat_id</code>, <code>limit</code>, <code>offset_id</code></td>
+                <td>دریافت لیست تاریخچه پیام‌های چت</td>
+              </tr>
+              <tr>
+                <td><code>load_dialogs</code></td>
+                <td><span class="badge badge-async">async</span></td>
+                <td><code>limit</code>, <code>offset_date</code></td>
+                <td>دریافت لیست گفتگوها و چت‌های فعال کاربر</td>
+              </tr>
+              <tr>
+                <td><code>clear_chat / delete_chat</code></td>
+                <td><span class="badge badge-async">async</span></td>
+                <td><code>chat_id</code></td>
+                <td>پاکسازی یا حذف کامل گفتگوی یک چت</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="sub-heading">نمونه کد پیام‌رسانی کامل</h3>
+        <div class="code-container">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+            <span>messaging_example.py</span>
+            <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+          </div>
+          <pre><code><span class="hl-com"># ارسال پیام متنی با متد مستقیم کلاینت</span>
+sent = <span class="hl-kw">await</span> client.send_message(
+    chat_id=123456789,
+    text=<span class="hl-str">"سلام! این یک پیام آزمایشی است."</span>
+)
+
+<span class="hl-com"># ارسال عکس با کپشن</span>
+<span class="hl-kw">await</span> client.send_photo(
+    chat_id=123456789,
+    file=<span class="hl-str">"./images/banner.png"</span>,
+    caption=<span class="hl-str">"بنر جدید کانال"</span>
+)
+
+<span class="hl-com"># ویرایش پیام</span>
+<span class="hl-kw">await</span> client.update_message(
+    chat_id=123456789,
+    message_id=sent.message_id,
+    text=<span class="hl-str">"این متن ویرایش شد."</span>
+)
+
+<span class="hl-com"># پین کردن پیام</span>
+<span class="hl-kw">await</span> client.pin_message(
+    chat_id=123456789,
+    message_id=sent.message_id
+)</code></pre>
+        </div>
+      </section>
+
+      <!-- API GROUPS & CHANNELS -->
+      <section id="api-groups" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            گروه‌ها و کانال‌ها (Groups & Channels API)
+          </h2>
+          <p class="section-subtitle">مدیریت کامل اعضا، دسترسی‌ها، بن/کیک، لینک دعوت و ارتقا به ادمین</p>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th>متد</th>
+                <th>پارامترها</th>
+                <th>کاربرد</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr id="method-create-group">
+                <td><code>create_group</code></td>
+                <td><code>title</code>, <code>about</code>, <code>members</code></td>
+                <td>ساخت گروه یا کانال جدید</td>
+              </tr>
+              <tr>
+                <td><code>get_full_group</code></td>
+                <td><code>group_id</code></td>
+                <td>دریافت اطلاعات کامل، آمار اعضا، توضیحات و پرمیشن‌ها</td>
+              </tr>
+              <tr>
+                <td><code>load_members</code></td>
+                <td><code>group_id</code>, <code>limit</code></td>
+                <td>دریافت لیست اعضای گروه به همراه رول‌ها</td>
+              </tr>
+              <tr id="method-kick-ban">
+                <td><code>kick_user / unban_user</code></td>
+                <td><code>group_id</code>, <code>user_id</code></td>
+                <td>اخراج کاربر از گروه یا رفع مسدودیت</td>
+              </tr>
+              <tr id="method-permissions">
+                <td><code>make_user_admin / remove_user_admin</code></td>
+                <td><code>group_id</code>, <code>user_id</code></td>
+                <td>ارتقا به مدیر یا خلع مقام ادمینی</td>
+              </tr>
+              <tr>
+                <td><code>set_member_permissions</code></td>
+                <td><code>group_id</code>, <code>user_id</code>, <code>permissions</code></td>
+                <td>تنظیم دقیق دسترسی‌های یک عضو (ارسال پیام، رسانه، دعوت و...)</td>
+              </tr>
+              <tr id="method-group-links">
+                <td><code>get_group_invite_url / revoke_invite_url</code></td>
+                <td><code>group_id</code></td>
+                <td>تولید یا باطل کردن لینک دعوت گروه</td>
+              </tr>
+              <tr>
+                <td><code>join_group / leave_group</code></td>
+                <td><code>invite_token</code> یا <code>group_id</code></td>
+                <td>عضویت از طریق لینک یا خروج از گروه</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- API USERS & CONTACTS -->
+      <section id="api-users" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            کاربران و مخاطبین (Users & Contacts API)
+          </h2>
+          <p class="section-subtitle">مدیریت لیست مخاطبین، جستجو، بلاک/آنبلاک و ویرایش پروفایل کاربری</p>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th>متد</th>
+                <th>پارامترها</th>
+                <th>کاربرد</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr id="method-contacts">
+                <td><code>get_contacts</code></td>
+                <td>—</td>
+                <td>دریافت لیست تمام مخاطبین ذخیره‌شده</td>
+              </tr>
+              <tr>
+                <td><code>add_contact / remove_contact</code></td>
+                <td><code>user_id</code>, <code>name</code></td>
+                <td>افزودن یا حذف مخاطب از دفترچه تلفن</td>
+              </tr>
+              <tr>
+                <td><code>search_contact</code></td>
+                <td><code>query</code></td>
+                <td>جستجوی نام کاربری یا شماره در بله</td>
+              </tr>
+              <tr id="method-block-users">
+                <td><code>block_user / unblock_user</code></td>
+                <td><code>user_id</code></td>
+                <td>مسدودسازی یا رفع مسدودی کاربر</td>
+              </tr>
+              <tr id="method-edit-profile">
+                <td><code>edit_name / edit_about / edit_nickname</code></td>
+                <td><code>name</code> / <code>about</code> / <code>nickname</code></td>
+                <td>تغییر نام نمایشی، بیوگرافی یا آیدی کاربری (@)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- API ABACUS & PRESENCE -->
+      <section id="api-abacus" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            واکنش‌ها، آمار و وضعیت آنلاین (Reactions & Presence)
+          </h2>
+          <p class="section-subtitle">ثبت ری‌اکشن به پیام‌ها، دریافت تعداد بازدیدها و تغییر حالت تایپینگ</p>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th>متد</th>
+                <th>دسته</th>
+                <th>کاربرد</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>message_set_reaction(chat_id, msg_id, reaction)</code></td>
+                <td>Abacus</td>
+                <td>ثبت ری‌اکشن اموجی روی یک پیام</td>
+              </tr>
+              <tr>
+                <td><code>get_messages_views(chat_id, message_ids)</code></td>
+                <td>Abacus</td>
+                <td>دریافت تعداد بازدیدهای پست‌های کانال یا گروه</td>
+              </tr>
+              <tr id="api-presence">
+                <td><code>typing(chat_id, typing_type)</code></td>
+                <td>Presence</td>
+                <td>نمایش وضعیت در حال تایپ، ضبط صدا، ارسال ویدیو و...</td>
+              </tr>
+              <tr>
+                <td><code>stop_typing(chat_id)</code></td>
+                <td>Presence</td>
+                <td>متوقف ساختن نمایش وضعیت تایپ</td>
+              </tr>
+              <tr>
+                <td><code>set_online(is_online)</code></td>
+                <td>Presence</td>
+                <td>تغییر وضعیت آنلاین/آفلاین بودن اکانت</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- API FILES & MEDIA -->
+      <section id="api-files" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>
+            دانلود و آپلود فایل و رسانه (Files & Media API)
+          </h2>
+          <p class="section-subtitle">آپلود و دانلود پرسرعت با بافرینگ خودکار، تشخیص نوع رسانه و چانک‌بندی</p>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th>متد</th>
+                <th>ورودی‌ها</th>
+                <th>خروجی</th>
+                <th>توضیحات</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>upload_file(file, chunk_size=4096)</code></td>
+                <td>مسیر فایل روی دیسک، بایت‌ها یا شیء فایل باز</td>
+                <td><code>FileUploadInfo</code></td>
+                <td>آپلود داده به فایل سرور بله و دریافت شناسه اختصاصی و هش دسترسی</td>
+              </tr>
+              <tr>
+                <td><code>download_file(file_id, access_hash)</code></td>
+                <td><code>file_id</code>, <code>access_hash</code></td>
+                <td><code>bytes</code></td>
+                <td>دانلود مستقیم و باینری تمام انواع اسناد، تصاویر و ویدیوها</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TYPES & MODELS -->
+      <section id="types-reference" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/></svg>
+            مرجع تایپ‌ها و مدل‌های داده (Types Reference)
+          </h2>
+          <p class="section-subtitle">مدل‌های داده Pydantic و متدهای شورت‌کات در کلاس Message</p>
+        </div>
+
+        <h3 id="type-message" class="sub-heading">متدهای کمکی کلاس Message</h3>
+        <p>در داخل هر هندلر پیام، آبجکت <code>Message</code> دارای متدهای اختصاصی است که نیاز به پاس دادن دستی <code>chat_id</code> را حذف می‌کند:</p>
+
+        <div class="code-container">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+            <span>message_helpers.py</span>
+            <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+          </div>
+          <pre><code><span class="hl-dec">@dp.message()</span>
+<span class="hl-kw">async def</span> <span class="hl-fn">handler</span>(msg: Message):
+    <span class="hl-com"># ریپلای کردن روی همین پیام</span>
+    <span class="hl-kw">await</span> msg.reply(<span class="hl-str">"پاسخ در ریپلای"</span>)
+
+    <span class="hl-com"># ارسال پیام در همین چت بدون ریپلای</span>
+    <span class="hl-kw">await</span> msg.answer(<span class="hl-str">"پیام مستقیم"</span>)
+
+    <span class="hl-com"># ارسال عکس در همین چت</span>
+    <span class="hl-kw">await</span> msg.answer_photo(<span class="hl-str">"./photo.jpg"</span>, caption=<span class="hl-str">"توضیحات"</span>)
+
+    <span class="hl-com"># حذف همین پیام</span>
+    <span class="hl-kw">await</span> msg.delete()
+
+    <span class="hl-com"># ویرایش متن پیام (در صورتی که توسط خود کلاینت ارسال شده باشد)</span>
+    <span class="hl-kw">await</span> msg.edit_text(<span class="hl-str">"متن جدید"</span>)
+
+    <span class="hl-com"># پین کردن پیام</span>
+    <span class="hl-kw">await</span> msg.pin()</code></pre>
+        </div>
+
+        <h3 id="type-chat-user" class="sub-heading">مدل‌های چت و کاربر (Chat, User, Member)</h3>
+        <p>فیلدهای اصلی مدل‌های داده:</p>
+        <ul style="padding-right: 20px; line-height: 2; color: var(--text-secondary);">
+          <li><code>Chat</code>: دارای فیلدهای <code>id</code>, <code>type</code> (از جنس ChatType), <code>title</code>.</li>
+          <li><code>User / FullUser</code>: دارای فیلدهای <code>id</code>, <code>name</code>, <code>nickname</code>, <code>about</code>, <code>avatar</code>, <code>phone</code>.</li>
+          <li><code>Member</code>: دارای فیلدهای <code>user_id</code>, <code>role</code>, <code>inviter_id</code>, <code>permissions</code>.</li>
+        </ul>
+      </section>
+
+      <!-- ENUMS -->
+      <section id="enums-reference" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/></svg>
+            مرجع ثابت‌ها و انام‌ها (Enums Reference)
+          </h2>
+          <p class="section-subtitle">ثابت‌های استاندارد پکیج برای انواع چت، نوع دسترسی و وضعیت‌ها</p>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th>نام Enum</th>
+                <th>مقادیر شاخص</th>
+                <th>کاربرد</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>ChatType</code></td>
+                <td><code>PRIVATE = 1</code>, <code>GROUP = 2</code>, <code>CHANNEL = 3</code></td>
+                <td>تفکیک نوع گفتگو در فیلترها و منطق ربات</td>
+              </tr>
+              <tr>
+                <td><code>PeerType</code></td>
+                <td><code>USER = 1</code>, <code>GROUP = 2</code></td>
+                <td>شناسایی نوع مخاطب در پروتکل شبکه</td>
+              </tr>
+              <tr>
+                <td><code>TypingMode</code></td>
+                <td><code>TEXT = 1</code>, <code>VOICERECORDING = 2</code>, <code>CHOOSINGGIF = 9</code></td>
+                <td>ارسال استاتوس به طرف مقابل</td>
+              </tr>
+              <tr>
+                <td><code>AuthErrors</code></td>
+                <td><code>NUMBER_BANNED</code>, <code>RATE_LIMIT</code>, <code>INVALID</code></td>
+                <td>شناسایی خطاهای احراز هویت در لاگین</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- EXAMPLES / RECIPES -->
+      <section id="example-echo" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/></svg>
+            پروژه‌های عملی و کاربردی (Real-World Recipes)
+          </h2>
+          <p class="section-subtitle">کدهای آماده و قابل اجرای ۵ ربات کاربردی در دنیای واقعی</p>
+        </div>
+
+        <h3 id="example-admin" class="sub-heading">پروژه ۲: ربات ضدلینک و مدیریت گروه (Group Moderation)</h3>
+        <div class="code-container">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+            <span>anti_spam_bot.py</span>
+            <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+          </div>
+          <pre><code><span class="hl-kw">import</span> re
+<span class="hl-kw">from</span> aiobale <span class="hl-kw">import</span> Client, Dispatcher, F
+<span class="hl-kw">from</span> aiobale.types <span class="hl-kw">import</span> Message
+<span class="hl-kw">from</span> aiobale.enums <span class="hl-kw">import</span> ChatType
+
+dp = Dispatcher()
+client = Client(dp, session_file=<span class="hl-str">"mod_bot"</span>)
+
+LINK_PATTERN = re.compile(<span class="hl-str">r"(https?://|ble\.ir/|t\.me/|eitaa\.com/)"</span>)
+
+<span class="hl-com"># حذف پیام‌های حاوی لینک تبلیغاتی در گروه‌ها</span>
+<span class="hl-dec">@dp.message(F.chat.type == ChatType.GROUP)</span>
+<span class="hl-kw">async def</span> <span class="hl-fn">anti_link_guard</span>(msg: Message, client: Client):
+    <span class="hl-kw">if</span> msg.text <span class="hl-kw">and</span> LINK_PATTERN.search(msg.text):
+        <span class="hl-com"># حذف پیام متخلف</span>
+        <span class="hl-kw">await</span> msg.delete()
+        <span class="hl-kw">print</span>(<span class="hl-str">f"پیام حاوی لینک از کاربر {msg.sender_id} حذف شد."</span>)
+
+<span class="hl-dec">@dp.message(F.text.startswith("/ban"), F.chat.type == ChatType.GROUP)</span>
+<span class="hl-kw">async def</span> <span class="hl-fn">ban_command</span>(msg: Message, client: Client):
+    <span class="hl-kw">if</span> msg.replied_to:
+        target_user = msg.replied_to.sender_id
+        <span class="hl-kw">await</span> client.kick_user(msg.chat.id, target_user)
+        <span class="hl-kw">await</span> msg.answer(<span class="hl-str">f"کاربر {target_user} از گروه اخراج شد."</span>)
+
+<span class="hl-kw">if</span> __name__ == <span class="hl-str">"__main__"</span>:
+    client.run()</code></pre>
+        </div>
+
+        <h3 id="example-downloader" class="sub-heading">پروژه ۳: ربات دانلودر و فورواردکننده مدیا (Media Bot)</h3>
+        <div class="code-container">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+            <span>media_bot.py</span>
+            <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+          </div>
+          <pre><code><span class="hl-kw">from</span> aiobale <span class="hl-kw">import</span> Client, Dispatcher, F
+<span class="hl-kw">from</span> aiobale.types <span class="hl-kw">import</span> Message
+
+dp = Dispatcher()
+client = Client(dp, session_file=<span class="hl-str">"media_bot"</span>)
+
+<span class="hl-dec">@dp.message(F.content.document)</span>
+<span class="hl-kw">async def</span> <span class="hl-fn">download_doc_handler</span>(msg: Message, client: Client):
+    doc = msg.content.document
+    <span class="hl-kw">await</span> msg.reply(<span class="hl-str">f"در حال دریافت فایل {doc.name}..."</span>)
+    
+    <span class="hl-com"># دانلود مستقیم فایل</span>
+    file_bytes = <span class="hl-kw">await</span> client.download_file(
+        file_id=doc.file_id,
+        access_hash=doc.access_hash
+    )
+    
+    <span class="hl-kw">await</span> msg.reply(<span class="hl-str">f"فایل با حجم {len(file_bytes)} بایت با موفقیت ذخیره شد."</span>)
+
+<span class="hl-kw">if</span> __name__ == <span class="hl-str">"__main__"</span>:
+    client.run()</code></pre>
+        </div>
+
+        <h3 id="example-broadcast" class="sub-heading">پروژه ۴: ربات برودکست و ارسال به کانال (Broadcaster)</h3>
+        <div class="code-container">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+            <span>broadcast_bot.py</span>
+            <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+          </div>
+          <pre><code><span class="hl-kw">import</span> asyncio
+<span class="hl-kw">from</span> aiobale <span class="hl-kw">import</span> Client
+
+CHANNELS = [100001, 100002, 100003]
+
+<span class="hl-kw">async def</span> <span class="hl-fn">broadcast_news</span>(text: str):
+    client = Client(session_file=<span class="hl-str">"sender"</span>)
+    <span class="hl-kw">await</span> client.start()
+
+    <span class="hl-kw">for</span> ch_id <span class="hl-kw">in</span> CHANNELS:
+        <span class="hl-kw">try</span>:
+            <span class="hl-kw">await</span> client.send_message(chat_id=ch_id, text=text)
+            <span class="hl-kw">print</span>(<span class="hl-str">f"پیام با موفقیت به {ch_id} ارسال شد."</span>)
+            <span class="hl-kw">await</span> asyncio.sleep(1) <span class="hl-com"># جلوگیری از ریت‌لیمیت</span>
+        <span class="hl-kw">except</span> Exception <span class="hl-kw">as</span> e:
+            <span class="hl-kw">print</span>(<span class="hl-str">f"خطا در ارسال به {ch_id}: {e}"</span>)
+
+    <span class="hl-kw">await</span> client.stop()
+
+<span class="hl-kw">if</span> __name__ == <span class="hl-str">"__main__"</span>:
+    asyncio.run(broadcast_news(<span class="hl-str">"اطلاعیه رسمی جدید در کانال‌ها منتشر شد."</span>))</code></pre>
+        </div>
+
+        <h3 id="example-routers" class="sub-heading">پروژه ۵: معماری ربات چندماژوله و پیشرفته</h3>
+        <div class="code-container">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+            <span>modular_app.py</span>
+            <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+          </div>
+          <pre><code><span class="hl-kw">from</span> aiobale <span class="hl-kw">import</span> Client, Dispatcher, Router, F
+<span class="hl-kw">from</span> aiobale.types <span class="hl-kw">import</span> Message
+
+user_router = Router()
+admin_router = Router()
+
+<span class="hl-dec">@user_router.message(F.text == "/help")</span>
+<span class="hl-kw">async def</span> <span class="hl-fn">user_help</span>(msg: Message):
+    <span class="hl-kw">await</span> msg.reply(<span class="hl-str">"راهنمای کاربر: دستورات مجاز /start و /about"</span>)
+
+<span class="hl-dec">@admin_router.message(F.text == "/stats")</span>
+<span class="hl-kw">async def</span> <span class="hl-fn">admin_stats</span>(msg: Message, client: Client):
+    dialogs = <span class="hl-kw">await</span> client.load_dialogs(limit=50)
+    <span class="hl-kw">await</span> msg.reply(<span class="hl-str">f"تعداد چت‌های فعال: {len(dialogs.chats)}"</span>)
+
+dp = Dispatcher()
+dp.include_router(user_router)
+dp.include_router(admin_router)
+
+client = Client(dp, session_file=<span class="hl-str">"modular_bot"</span>)
+
+<span class="hl-kw">if</span> __name__ == <span class="hl-str">"__main__"</span>:
+    client.run()</code></pre>
+        </div>
+      </section>
+
+      <!-- TROUBLESHOOTING -->
+      <section id="troubleshooting" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+            مدیریت خطاها و عیب‌یابی (Troubleshooting)
+          </h2>
+          <p class="section-subtitle">راهنمای جامع رفع خطاهای متداول شبکه، سشن و توکن</p>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th>خطا (Error / Exception)</th>
+                <th>علت وقوع</th>
+                <th>راهکار رفع</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>AuthErrors.NUMBER_BANNED</code></td>
+                <td>شماره واردشده در سیستم بله مسدود یا بن شده است</td>
+                <td>با پشتیبانی بله تماس بگیرید یا از شماره دیگری استفاده نمایید</td>
+              </tr>
+              <tr>
+                <td><code>AuthErrors.RATE_LIMIT</code></td>
+                <td>درخواست‌های لاگین مکرر در بازه کوتاه</td>
+                <td>چند دقیقه صبر کرده و مجدداً اقدام فرمایید</td>
+              </tr>
+              <tr>
+                <td><code>AiobaleError: Authentication token is required...</code></td>
+                <td>اجرا در داکر یا محیط Headless بدون ارسال توکن</td>
+                <td>پارامتر <code>token="..."</code> را مستقیماً به <code>Client</code> پاس دهید</td>
+              </tr>
+              <tr>
+                <td><code>ConnectionResetError / Socket Closed</code></td>
+                <td>قطعی موقت اینترنت یا اتصال شبکه</td>
+                <td>کلاینت به صورت پیش‌فرض تلاش مجدد خودکار (Auto Reconnect) را انجام می‌دهد</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="doc-footer">
+        <div>
+          توسعه داده شده با دقت و کیفیت برای اکوسیستم متن‌باز پیام‌رسان بله.
+        </div>
+        <div class="footer-links">
+          <a href="https://github.com/aminmadaniofficial/aiobale" target="_blank" rel="noopener noreferrer">گیت‌هاب پروژه</a>
+          <a href="#getting-started">بازگشت به بالا</a>
+        </div>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

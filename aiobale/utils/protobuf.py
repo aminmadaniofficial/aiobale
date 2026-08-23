@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 import base64
 import re
 import unicodedata
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 from blackboxprotobuf import decode_message, encode_message
+from ..logger import logger
 
 
 def merge_typedefs(a: Dict[str, Any], b: Dict[str, Any]) -> Dict[str, Any]:
@@ -135,7 +138,7 @@ class ProtoBuf:
             try:
                 entries = _parse_protobuf_fields(raw_message_bytes)
             except Exception as e:
-                print(e)
+                logger.debug(f"Error parsing protobuf fields: {e}")
                 return data
 
             new_data: Dict[str, Any] = {}

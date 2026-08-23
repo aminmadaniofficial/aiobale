@@ -12,6 +12,7 @@ class TypingMode(int, Enum):
     TEXT = 1
     """Represents typing in text mode."""
     
+    VOICERECORDING = 2
     VOICERECODRING = 2
     """Represents recording a voice message."""
     
@@ -33,6 +34,7 @@ class TypingMode(int, Enum):
     CHOOSINGSTICKER = 8
     """Represents choosing a sticker."""
     
+    CHOOSINGGIF = 9
     CHOSINGGIF = 9
     """Represents choosing a GIF."""
     
@@ -42,5 +44,6 @@ class TypingMode(int, Enum):
     SENDINGALBUM = 11
     """Represents sending an album."""
     
+    CHOOSINGEMOJI = 12
     CHOSINGEMOJI = 12
     """Represents choosing an emoji."""

@@ -1,9 +1,9 @@
 [project]
 name = "aiobale"
-version = "0.1.5"
+version = "0.1.6"
 description = "Modern async client for Bale."
 authors = [
-    { name = "Alireza Jahani", email = "mrbansti@gmail.com" }
+    { name = "Amin Madani", email = "aminmadani@example.com" }
 ]
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -19,8 +19,9 @@ dependencies = [
 ]
 
 [project.urls]
-"Homepage" = "https://docs.aiobale.ir"
-"Repository" = "https://github.com/Enalite/aiobale"
+"Homepage" = "https://github.com/aminmadaniofficial/aiobale"
+"Repository" = "https://github.com/aminmadaniofficial/aiobale"
+"Documentation" = "https://github.com/aminmadaniofficial/aiobale"
 
 [build-system]
 requires = ["setuptools>=61.0"]

@@ -8,7 +8,7 @@ class BaleObject(BotContextController, BaseModel):
     """
     A base class for Bale objects that combines `BotContextController` and `BaseModel`.
     This class provides configuration for Pydantic models and extends functionality
-    with custom JSON encoders and validation rules.
+    with validation rules.
     """
 
     model_config = ConfigDict(
@@ -18,9 +18,6 @@ class BaleObject(BotContextController, BaseModel):
         validate_assignment=True,  # Validates fields on assignment.
         arbitrary_types_allowed=True,  # Allows arbitrary types in the model.
         defer_build=True,  # Defers model building for performance optimization.
-        json_encoders={
-            bool: lambda v: 1 if v else 0  # Encodes boolean values as 1 (True) or 0 (False).
-        }
     )
 
     if TYPE_CHECKING:

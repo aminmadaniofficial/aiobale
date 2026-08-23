@@ -324,6 +324,7 @@ class Client:
         proxy: Optional[str] = None,
         user_agent: Optional[str] = None,
         show_update_errors: bool = False,
+        token: Optional[str] = None,
     ):
         if session is None:
             session = AiohttpSession(
@@ -346,27 +347,33 @@ class Client:
         self._stopped = False
         self._ignored_messages = IgnoredUpdates(event_type="message")
 
-        if isinstance(session_file, (str, pathlib.Path)):
+        if session_file is None:
+            self.__session_file = None
+        elif isinstance(session_file, (str, pathlib.Path)):
             path = pathlib.Path(session_file)
             if path.suffix.lower() != ".bale":
                 path = path.with_suffix(".bale")
             self.__session_file = path.resolve()
-
         elif isinstance(session_file, bytes):
-            path = Path(DEFAULT_SESSION)
+            path = pathlib.Path(DEFAULT_SESSION)
             if path.suffix.lower() != ".bale":
                 path = path.with_suffix(".bale")
             path = path.resolve()
             path.write_bytes(session_file)
             self.__session_file = path
-
         else:
-            raise TypeError("session_file must be str، Path or bytes")
+            raise TypeError("session_file must be str, Path, bytes or None")
 
-        self.__token = None
+        self.__token = token
         self._me = None
 
-        self._add_token_via_file()
+        if self.__token:
+            try:
+                self._me = self._check_token(None)
+            except Exception:
+                pass
+        else:
+            self._add_token_via_file()
 
         _CLIENTS.add(self)
 
@@ -391,14 +398,14 @@ class Client:
         return self._me
 
     @property
-    def id(self) -> int:
+    def id(self) -> Optional[int]:
         """
-        Returns the numeric ID of the authenticated user.
+        Returns the numeric ID of the authenticated user, or None if not yet authenticated.
 
         Equivalent to `client.me.id`. Useful as a shortcut for user identification
         in event handling and API interactions.
         """
-        return self._me.id
+        return self._me.id if self._me else None
 
     @property
     def session_file(self) -> pathlib.Path:
@@ -444,6 +451,11 @@ class Client:
     async def _ensure_token_exists(self) -> None:
         if self.__token is None:
             if not self._add_token_via_file():
+                if not sys.stdin.isatty():
+                    raise AiobaleError(
+                        "Authentication token is required, but interactive login "
+                        "is not supported in non-interactive/headless environments."
+                    )
                 auth_cli = PhoneLoginCLI(self)
                 await auth_cli.start()
 
@@ -612,12 +624,12 @@ class Client:
     def _should_ignore(self, event_type: str, event: Any) -> bool:
         if event_type == "message":
             message_id = getattr(event, "message_id", None)
-            if message_id not in self._ignored_messages.targets:
-                return False
+            if message_id in self._ignored_messages.targets:
+                self._ignored_messages.targets.remove(message_id)
+                return True
+            return False
 
-            self._ignored_messages.targets.remove(message_id)
-
-        return True
+        return False
 
     async def handle_update(self, update: UpdateBody) -> None:
         """
@@ -679,7 +691,7 @@ class Client:
     ) -> None:
         await self.session.close()
 
-    def _check_token(self, user: UserAuth) -> ClientData:
+    def _check_token(self, user: Optional[UserAuth] = None) -> ClientData:
         token = self.__token
         result = parse_jwt(token)
         if not result:
@@ -689,7 +701,12 @@ class Client:
         if "payload" not in data:
             raise AiobaleError("Wrong jwt payload")
 
-        data["payload"]["user"] = user
+        if user is not None:
+            data["payload"]["user"] = user
+        elif "user" not in data["payload"]:
+            user_id = data["payload"].get("userId") or data["payload"].get("id") or 0
+            data["payload"]["user"] = UserAuth(id=user_id)
+
         return ClientData.model_validate(data["payload"])
 
     async def start_phone_auth(
@@ -727,7 +744,7 @@ class Client:
         result: Union[str, PhoneAuthResponse] = await self.session.post(call)
 
         if isinstance(result, str):
-            if result == [
+            if result in [
                 "phone number is blocked",
                 "PHONE_NUMBER_TEMPORARY_BLOCKED",
             ]:

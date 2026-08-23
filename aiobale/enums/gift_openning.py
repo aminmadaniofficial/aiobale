@@ -20,3 +20,5 @@ class GiftOpenning(int, Enum):
 
     PENDING = 4
     """The gift opening process is pending or waiting for completion."""
+
+GiftOpening = GiftOpenning

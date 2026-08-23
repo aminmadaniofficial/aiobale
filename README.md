@@ -64,15 +64,15 @@ Bale Messenger's API can be a maze of encrypted gRPC calls. **Aiobale** cuts thr
 
 #### Direct via Git
 ```bash
-pip install git+https://github.com/aminmadaniofficial/aiobale-revived.git
+pip install git+https://github.com/aminmadaniofficial/aiobale.git
 
 ```
 
 #### Clone and Install Locally
 
 ```bash
-git clone https://github.com/aminmadaniofficial/aiobale-revived.git
-cd aiobale-revived
+git clone https://github.com/aminmadaniofficial/aiobale.git
+cd aiobale
 pip install .
 
 ```
@@ -80,7 +80,7 @@ pip install .
 #### Direct Wheel Package (Releases)
 
 ```bash
-pip install https://github.com/aminmadaniofficial/aiobale-revived/releases/download/v0.1.5/aiobale-0.1.5-py3-none-any.whl
+pip install https://github.com/aminmadaniofficial/aiobale/releases/download/v0.1.5/aiobale-0.1.5-py3-none-any.whl
 
 ```
 
@@ -127,4 +127,4 @@ Every contribution counts — even small fixes make a difference.
 
 * **Original Author:** Alireza Jahani ([@enalite](https://github.com/enalite))
 * **Maintained by:** Mohammadamin Madani ([@aminmadaniofficial](https://github.com/aminmadaniofficial))
-* **License:** [MIT License](https://github.com/aminmadaniofficial/aiobale-revived/blob/main/LICENSE)
+* **License:** [MIT License](https://github.com/aminmadaniofficial/aiobale/blob/main/LICENSE)

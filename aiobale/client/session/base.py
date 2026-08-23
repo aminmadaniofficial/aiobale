@@ -195,6 +195,7 @@ class BaseSession(abc.ABC):
     @abc.abstractmethod
     async def upload(
         self,
+        file: Any,
         url: str,
         token: str,
         chunk_size: int = 4096,

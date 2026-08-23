@@ -11,7 +11,7 @@ from .group_type import GroupType
 from .restriction import Restriction
 from .send_type import SendType
 from .giving_type import GivingType
-from .gift_openning import GiftOpenning
+from .gift_openning import GiftOpenning, GiftOpening
 from .auth_errors import AuthErrors
 
 
@@ -30,5 +30,6 @@ __all__ = (
     "SendType",
     "GivingType",
     "GiftOpenning",
+    "GiftOpening",
     "AuthErrors"
 )

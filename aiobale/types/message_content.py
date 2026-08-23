@@ -179,7 +179,7 @@ class MessageContent(BaleObject):
             __pydantic__self__,
             *,
             document: Optional[DocumentMessage] = None,
-            epmty: bool = False,
+            empty: bool = False,
             text: Optional[TextMessage] = None,
             gift: Optional[GiftPacket] = None,
             bot_message: Optional[TemplateMessage] = None,
@@ -188,7 +188,7 @@ class MessageContent(BaleObject):
             super().__init__(
                 document=document,
                 text=text,
-                epmty=epmty,
+                empty=empty,
                 gift=gift,
                 bot_message=bot_message,
                 **__pydantic_kwargs,
