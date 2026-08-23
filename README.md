@@ -1,130 +1,157 @@
-<p align="center">
-  <img src="https://i.postimg.cc/Ssg1Tfhr/banner.png" alt="Aiobale Banner">
-</p>
+# Aiobale
 
-<h1 align="center">Aiobale (Revived & Maintained)</h1>
-<h3 align="center">Async Python Client for Bale Messenger — Simplified, Modern, Pythonic</h3>
+<div align="center">
 
-<p align="center">
-  <strong>Aiobale</strong> is an asynchronous Python library that unlocks Bale Messenger's internal API, making it effortless to build bots, automation, and tools without diving into gRPC or Protobuf complexity.
-</p>
+[![CI Test Suite](https://github.com/aminmadaniofficial/aiobale/actions/workflows/ci.yml/badge.svg)](https://github.com/aminmadaniofficial/aiobale/actions/workflows/ci.yml)
+[![Documentation](https://img.shields.io/badge/Docs-GitHub%20Pages-2563eb?style=flat&logo=github)](https://aminmadaniofficial.github.io/aiobale/)
+[![Python](https://img.shields.io/badge/Python-3.8%20--%203.14-3776AB?style=flat&logo=python)](https://www.python.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/aminmadaniofficial/aiobale/blob/main/LICENSE)
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Python-3.8+-brightgreen?logo=python" alt="Python Version">
-  <img src="https://img.shields.io/badge/License-MIT-blue?logo=open-source-initiative" alt="License">
-  <img src="https://img.shields.io/badge/Status-Restored%20%26%20Maintained-orange" alt="Status">
-</p>
+**Modern, fast, fully asynchronous Python framework for Bale Messenger.**
+
+[📖 Interactive Documentation](https://aminmadaniofficial.github.io/aiobale/) • [📦 PyPI Package](https://pypi.org/project/aiobale/) • [🚀 Quickstart](#-quickstart) • [✨ Features](#-key-features)
+
+</div>
 
 ---
 
-### 📌 About This Repository
+## 🌟 Overview
 
-This repository is a preserved and actively maintained mirror of **Aiobale** (originally created by [Alireza Jahani](https://github.com/enalite)).
-
-On **August 19, 2026**, the original repository was removed by the author and replaced on PyPI with an empty placeholder package. Since this was one of the cleanest reverse-engineered asynchronous clients for Bale Messenger's internal API, this repository has been restored and prepared with ready-to-use installation files so the community can continue using and developing it.
-
-Further maintenance, bug fixes, protocol updates, and feature enhancements will be applied directly to this repository moving forward.
+**Aiobale** is a high-performance, asynchronous Python library built on top of `asyncio`, WebSockets, and Protocol Buffers for the **Bale Messenger** platform. Designed with inspiration from modern bot frameworks like `aiogram`, it allows developers to build userbots, official bots, automation tools, and group management services with minimal resource usage and complete type safety.
 
 ---
 
-## 🚀 Why Aiobale?
+## ✨ Key Features
 
-Bale Messenger's API can be a maze of encrypted gRPC calls. **Aiobale** cuts through the noise:
-
-- **Async-first, fully non-blocking**, built on `aiohttp` and `asyncio`.
-- **Type-safe** Python classes for messages, users, groups, and more powered by `pydantic`.
-- **Event-driven Dispatcher** for clean, modular bot code.
-- **Handles connections**, reconnections, and multi-client setups effortlessly.
-- **Reverse-engineered**, zero reliance on `.proto` files.
-
-**In short:** Build bots, automation, or monitoring tools **without wrestling with low-level network details**.
-
----
-
-## ✨ Features
-
-- **Async & High Performance:** Responsive bots and automation pipelines.
-- **Complete API Coverage:** Messaging, files, presence, bots, groups, channels.
-- **Pythonic Interface:** Type hints, dataclasses, clean methods.
-- **Smart Dispatcher:** Decorator-based event routing, multiple clients support.
-- **Robust Connections:** Auto-reconnects, handles disconnects gracefully.
-- **Extensible & Modular:** Easy to adapt and extend for custom workflows.
-
----
-
-## ⚠️ Important Notes
-
-- Bale’s API is sensitive to excessive POST gRPC calls, especially outside authentication. Overuse may trigger **rate limits** or temporary account bans.
-- Use Aiobale responsibly — **no spamming, scraping, or TOS violations**.
-- Aiobale is **unofficial** and provided **as-is** for educational and ethical purposes.
+- **⚡ Fully Asynchronous:** Built natively on Python `asyncio` for non-blocking I/O and high concurrency.
+- **🔮 Magic Filter (`F`):** Powerful expression-based event filtering (e.g. `F.text.startswith("/start")`, `F.chat.type == ChatType.GROUP`).
+- **🔀 Modular Routing:** Organize complex bots across multiple files using `Router` and sub-routers.
+- **🛡️ Full RPC Coverage (79+ Methods):** Complete access to Messaging, Groups, Channels, Contacts, Presence, Reactions, and File APIs.
+- **📁 Fast Media Upload & Download:** Automated chunked file streaming with binary support.
+- **🔐 Flexible Authentication:** Interactive CLI phone login, persistent session files (`.bale`), direct JWT token support, and headless Docker readiness.
+- **🧩 100% Type Annotated:** Powered by Pydantic v2 for data validation and complete IDE autocompletion.
+- **🧪 Battle-Tested:** Automated CI pipeline verifying compatibility from Python 3.8 to 3.14.
 
 ---
 
 ## 📦 Installation
 
-#### Direct via Git
 ```bash
+# Install from PyPI
+pip install aiobale
+
+# Or install the latest development version directly from GitHub
 pip install git+https://github.com/aminmadaniofficial/aiobale.git
-
-```
-
-#### Clone and Install Locally
-
-```bash
-git clone https://github.com/aminmadaniofficial/aiobale.git
-cd aiobale
-pip install .
-
-```
-
-#### Direct Wheel Package (Releases)
-
-```bash
-pip install https://github.com/aminmadaniofficial/aiobale/releases/download/v0.1.5/aiobale-0.1.5-py3-none-any.whl
-
 ```
 
 ---
 
-## 💡 Quick Start — Echo Bot
+## 🚀 Quickstart
+
+Create your first bot in less than 5 minutes:
 
 ```python
-from aiobale import Client, Dispatcher
+import asyncio
+from aiobale import Client, Dispatcher, F
+from aiobale.types import Message
+from aiobale.filters import IsText
+
+dp = Dispatcher()
+client = Client(dp, session_file="my_bot")
+
+@dp.message(F.text == "/start")
+async def start_handler(message: Message):
+    await message.reply("Hello! Welcome to Aiobale 🚀")
+
+@dp.message(IsText())
+async def echo_handler(message: Message):
+    await message.reply(f"You said: {message.text}")
+
+async def main():
+    print("Connecting to Bale Messenger...")
+    await client.start()
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+When you run this script for the first time in your terminal, it will interactively prompt for your phone number and SMS verification code, then store the session in `my_bot.bale` for automatic reconnects.
+
+---
+
+## 🎯 Code Examples
+
+### 1. Group Moderation & Anti-Link Bot
+
+```python
+import re
+from aiobale import Client, Dispatcher, F
+from aiobale.types import Message
+from aiobale.enums import ChatType
+
+dp = Dispatcher()
+client = Client(dp, session_file="mod_bot")
+
+LINK_REGEX = re.compile(r"(https?://|ble\.ir/|t\.me/|eitaa\.com/)")
+
+@dp.message(F.chat.type == ChatType.GROUP)
+async def delete_links(msg: Message):
+    if msg.text and LINK_REGEX.search(msg.text):
+        await msg.delete()
+
+@dp.message(F.text == "/ban", F.chat.type == ChatType.GROUP)
+async def ban_user(msg: Message, client: Client):
+    if msg.replied_to:
+        await client.kick_user(msg.chat.id, msg.replied_to.sender_id)
+        await msg.answer("User kicked from group.")
+
+if __name__ == "__main__":
+    client.run()
+```
+
+### 2. Media Downloader Bot
+
+```python
+from aiobale import Client, Dispatcher, F
 from aiobale.types import Message
 
 dp = Dispatcher()
-client = Client(dp)
+client = Client(dp, session_file="media_bot")
 
-@dp.message()
-async def echo(msg: Message):
-    if content := msg.document:
-        await msg.answer_document(content, use_own_content=True)
-    elif text := msg.text:
-        await msg.answer(text)
-    else:
-        await msg.answer("Nothing to echo!")
+@dp.message(F.content.document)
+async def handle_document(msg: Message, client: Client):
+    doc = msg.content.document
+    await msg.reply(f"Downloading {doc.name}...")
+    
+    file_bytes = await client.download_file(
+        file_id=doc.file_id,
+        access_hash=doc.access_hash
+    )
+    
+    await msg.reply(f"File downloaded successfully ({len(file_bytes)} bytes)!")
 
-client.run()
-
+if __name__ == "__main__":
+    client.run()
 ```
 
 ---
 
-## 🧑‍💻 Contributing
+## 📚 Comprehensive Documentation
 
-We welcome contributions of all kinds:
+The repository includes a modern, web-based interactive documentation website with zero emojis, custom Lucide icons, Dark/Light modes, live search (`Ctrl+K`), and reference guides for all 79+ methods:
 
-* ⭐ Star the repo
-* 🐞 Report bugs or request features via Issues
-* 🧩 Submit pull requests (code, docs, tests)
-* ✍️ Help document unknown methods or structures
-
-Every contribution counts — even small fixes make a difference.
+👉 **[Read the Full Documentation](https://aminmadaniofficial.github.io/aiobale/)**
 
 ---
 
-## 📄 License & Credits
+## 🏛️ Project Origin & Acknowledgements
 
-* **Original Author:** Alireza Jahani ([@enalite](https://github.com/enalite))
-* **Maintained by:** Mohammadamin Madani ([@aminmadaniofficial](https://github.com/aminmadaniofficial))
-* **License:** [MIT License](https://github.com/aminmadaniofficial/aiobale/blob/main/LICENSE)
+This project is built upon the foundational work of the original `aiobale` library created by **Alireza Jahani** ([Enalite LD](https://github.com/Enalite)). 
+
+It has been modernized, heavily refactored, debugged, and is now actively maintained with automated CI/CD and comprehensive docs by **[Amin Madani](https://github.com/aminmadaniofficial)**.
+
+---
+
+## 📄 License
+
+Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for more details.
