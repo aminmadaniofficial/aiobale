@@ -11,6 +11,7 @@ import aiofiles
 import os
 from typing import (
     Any,
+    AsyncContextManager,
     AsyncGenerator,
     BinaryIO,
     Callable,
@@ -25,7 +26,7 @@ from typing import (
     Union,
 )
 from types import TracebackType
-from contextlib import AbstractAsyncContextManager, asynccontextmanager, suppress
+from contextlib import asynccontextmanager, suppress
 
 from .session import AiohttpSession, BaseSession
 from ..exceptions import AiobaleError
@@ -220,7 +221,7 @@ from ..logger import logger
 from .auth_cli import PhoneLoginCLI
 
 
-LifespanType = Callable[["Client"], AbstractAsyncContextManager[None]]
+LifespanType = Callable[["Client"], AsyncContextManager[None]]
 DEFAULT_SESSION: Final[pathlib.Path] = pathlib.Path("./session.bale")
 
 # --- Global registry of clients ---
