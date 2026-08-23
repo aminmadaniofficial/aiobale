@@ -127,4 +127,4 @@ Every contribution counts — even small fixes make a difference.
 
 * **Original Author:** Alireza Jahani ([@enalite](https://github.com/enalite))
 * **Maintained by:** Mohammadamin Madani ([@aminmadaniofficial](https://github.com/aminmadaniofficial))
-* **License:** [MIT License](https://www.google.com/search?q=LICENSE)
+* **License:** [MIT License](https://github.com/aminmadaniofficial/aiobale-revived/blob/main/LICENSE)
