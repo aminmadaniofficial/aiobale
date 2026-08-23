@@ -1,0 +1,27 @@
+[project]
+name = "aiobale"
+version = "0.1.5"
+description = "Modern async client for Bale."
+authors = [
+    { name = "Alireza Jahani", email = "mrbansti@gmail.com" }
+]
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.8"
+dependencies = [
+    "aiohttp>=3.9,<4.0",
+    "aiofiles>=23.1,<24.0",
+    "colorama>=0.4.6,<1.0",
+    "pydantic>=2.0,<3.0",
+    "typing_extensions>=4.0,<5.0",
+    "blackboxprotobuf>=1.0.1,<2.0",
+    "magic-filter>=1.0,<2.0"
+]
+
+[project.urls]
+"Homepage" = "https://docs.aiobale.ir"
+"Repository" = "https://github.com/Enalite/aiobale"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
