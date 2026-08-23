@@ -1,10 +1,13 @@
+from __future__ import annotations
+
 import asyncio
 import contextvars
 from functools import partial
 import inspect
 from dataclasses import dataclass, field
 from magic_filter.magic import MagicFilter as OriginalMagicFilter
-from typing import Awaitable, Callable, Optional, Any, List, ParamSpec, TypeVar, Union
+from typing import Awaitable, Callable, Optional, Any, List, TypeVar, Union
+from typing_extensions import ParamSpec
 
 from ...filters.base import Filter
 from ...utils.magic_filter import MagicFilter
