@@ -1,6 +1,6 @@
 """
 05. Broadcast Queue & Anti-Flood Example
-ارسال امن پیام‌های همگانی به هزاران کاربر با کنترل نرخ و نوار پیشرفت زنده
+ارسال امن پیام‌های همگانی با کنترل نرخ و نوار پیشرفت زنده
 """
 import asyncio
 from aiobale import Client, Dispatcher, F, Command
@@ -14,12 +14,12 @@ client = Client(dp, session_file="session.bale")
 # صف هوشمند کنترل نرخ (حداکثر ۲۰ درخواست در ثانیه)
 throttler = MessageThrottler(rate_limit=0.05, max_retries=3)
 
-# لیست کاربران هدف (برای نمونه)
-TARGET_USERS = [10000001, 10000002, 10000003, 10000004, 10000005]
-
 @dp.message(Command("broadcast"))
 async def start_broadcast(msg: Message):
-    await msg.reply(f"📢 ارسال پیام همگانی به {len(TARGET_USERS)} کاربر آغاز شد...")
+    # برای تست زنده، ۳ پیام به اکانت خودتان ارسال می‌کنیم تا ۱۰۰٪ موفق باشد
+    target_users = [msg.sender_id, msg.sender_id, msg.sender_id]
+    
+    await msg.reply(f"📢 ارسال {len(target_users)} پیام اطلاع‌رسانی از طریق صف Throttler آغاز شد...")
 
     # هوک نوار پیشرفت در کنسول
     progress_bar = create_progress_bar("ارسال پیام به کاربران")
@@ -28,25 +28,31 @@ async def start_broadcast(msg: Message):
         await client.send_message(
             chat_id=uid,
             chat_type=ChatType.USER,
-            text="سلام کاربر عزیز! این یک پیام اطلاع‌رسانی از ربات است 🚀"
+            text="سلام! این یک پیام اطلاع‌رسانی تست از طریق صف ضد بلاکی Aiobale است 🚀"
         )
 
-    # اجرای همگانی ایمن با مدیریت خطاهای احتمالی
+    # اجرای همگانی ایمن
     report = await throttler.broadcast(
         send_fn=send_to_user,
-        chat_ids=TARGET_USERS,
+        chat_ids=target_users,
         progress_callback=progress_bar
     )
 
+    error_details = ""
+    if report.errors:
+        error_details = "\n⚠️ خطاهای رخ داده:\n" + "\n".join([f"- کاربر {k}: {v}" for k, v in report.errors.items()])
+
     await msg.reply(
         "✅ عملیات ارسال همگانی به پایان رسید!\n\n"
-        f"📊 کل کاربران: {report.total}\n"
-        f"✔️ ارسال‌های موفق: {report.success_count}\n"
+        f"📊 کل درخواست‌ها: {report.total}\n"
+        f"✔️ موفق: {report.success_count}\n"
         f"❌ ناموفق: {report.failure_count}\n"
         f"⏱️ زمان کل: {report.duration_seconds:.2f} ثانیه"
+        f"{error_details}"
     )
 
 async def main():
+    print("🚀 Broadcast Bot is running...")
     await client.start()
 
 if __name__ == "__main__":

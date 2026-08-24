@@ -47,15 +47,16 @@ async def show_shop(msg: Message):
         callback_prefix="shop_page"
     )
     markup = paginator.get_page(page=1)
-    await msg.reply("📚 لیست محصولات فروشگاه آموزشی:", components=markup)
+    await msg.reply("📚 لیست محصولات فروشگاه آموزشی:", reply_markup=markup)
 
 @dp.message(ProductCB.filter(F.action == "buy"))
 async def buy_product(event, callback_data: ProductCB):
     product = next((p for p in PRODUCTS if p["id"] == callback_data.product_id), None)
     if product:
-        print(f"خرید محصول: {product['name']}")
+        print(f"🛒 درخواست خرید محصول: {product['name']}")
 
 async def main():
+    print("🚀 Shop & Wallet Bot is running...")
     await client.start()
 
 if __name__ == "__main__":
