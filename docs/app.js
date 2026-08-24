@@ -1,4 +1,4 @@
-﻿// Aiobale Documentation App Engine
+// Aiobale Documentation App Engine
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   initSidebar();
@@ -42,17 +42,35 @@ function updateThemeIcon(theme) {
 function initSidebar() {
   const menuToggle = document.getElementById('menu-toggle');
   const sidebar = document.getElementById('sidebar');
+  const backdrop = document.getElementById('sidebar-backdrop');
+
+  function openSidebar() {
+    if (!sidebar) return;
+    sidebar.classList.add('open');
+    if (backdrop) backdrop.classList.add('active');
+    document.body.classList.add('sidebar-open');
+  }
+
+  function closeSidebar() {
+    if (!sidebar) return;
+    sidebar.classList.remove('open');
+    if (backdrop) backdrop.classList.remove('active');
+    document.body.classList.remove('sidebar-open');
+  }
 
   if (menuToggle && sidebar) {
-    menuToggle.addEventListener('click', () => {
-      sidebar.classList.toggle('open');
+    menuToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
     });
 
-    document.addEventListener('click', (e) => {
-      if (window.innerWidth <= 960 && sidebar.classList.contains('open')) {
-        if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
-          sidebar.classList.remove('open');
-        }
+    if (backdrop) {
+      backdrop.addEventListener('click', closeSidebar);
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+        closeSidebar();
       }
     });
 
@@ -60,7 +78,7 @@ function initSidebar() {
     sidebar.querySelectorAll('a').forEach((link) => {
       link.addEventListener('click', () => {
         if (window.innerWidth <= 960) {
-          sidebar.classList.remove('open');
+          closeSidebar();
         }
       });
     });
