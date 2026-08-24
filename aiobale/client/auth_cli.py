@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Optional, Union
 from ..exceptions import AiobaleError
 from ..enums import SendCodeType, AuthErrors
 from ..types.responses import PhoneAuthResponse
+from ..utils.compat import to_thread
 
 if TYPE_CHECKING:
     from .client import Client
@@ -207,7 +208,7 @@ class PhoneLoginCLI:
 
                 try:
                     code = await asyncio.wait_for(
-                        asyncio.to_thread(
+                        to_thread(
                             self._input, "Enter code: ", "Code ra vared kon: ", Fore.BLUE
                         ),
                         timeout=remaining_time,
@@ -333,7 +334,7 @@ class PhoneLoginCLI:
         while attempts < max_attempts:
             try:
                 password = await asyncio.wait_for(
-                    asyncio.to_thread(
+                    to_thread(
                         self._input, "Enter password: ", "Ramz ra vared kon: ", Fore.BLUE
                     ),
                     timeout=60,

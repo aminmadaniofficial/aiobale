@@ -7,6 +7,7 @@ from typing import Any, Dict, Optional, Union
 
 from .base import BaseStorage
 from ..state import State
+from ...utils.compat import to_thread
 
 
 class SQLiteStorage(BaseStorage):
@@ -59,7 +60,7 @@ class SQLiteStorage(BaseStorage):
                 )
                 conn.commit()
 
-        await asyncio.to_thread(_sync_set_state)
+        await to_thread(_sync_set_state)
 
     async def get_state(self, chat_id: int, user_id: int) -> Optional[str]:
         def _sync_get_state():
@@ -72,7 +73,7 @@ class SQLiteStorage(BaseStorage):
                 row = cursor.fetchone()
                 return row[0] if row else None
 
-        return await asyncio.to_thread(_sync_get_state)
+        return await to_thread(_sync_get_state)
 
     async def set_data(
         self,
@@ -95,7 +96,7 @@ class SQLiteStorage(BaseStorage):
                 )
                 conn.commit()
 
-        await asyncio.to_thread(_sync_set_data)
+        await to_thread(_sync_set_data)
 
     async def get_data(self, chat_id: int, user_id: int) -> Dict[str, Any]:
         def _sync_get_data():
@@ -113,7 +114,7 @@ class SQLiteStorage(BaseStorage):
                         return {}
                 return {}
 
-        return await asyncio.to_thread(_sync_get_data)
+        return await to_thread(_sync_get_data)
 
     async def update_data(
         self,
@@ -136,7 +137,7 @@ class SQLiteStorage(BaseStorage):
                 )
                 conn.commit()
 
-        await asyncio.to_thread(_sync_clear)
+        await to_thread(_sync_clear)
 
     async def close(self) -> None:
         pass
