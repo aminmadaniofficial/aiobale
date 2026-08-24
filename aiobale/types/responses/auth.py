@@ -56,6 +56,16 @@ class PhoneAuthResponse(BaleObject):
     code_timeout: Value = Field(..., alias="8")
     """How long (in **seconds**) the client should wait before being allowed to request a new code."""
 
+    @property
+    def resend_timeout(self) -> Value:
+        """Alias for code_timeout."""
+        return self.code_timeout
+
+    @property
+    def next_code_type(self) -> Optional[SendCodeType]:
+        """Alias for next_send_code_type."""
+        return self.next_send_code_type
+
     if TYPE_CHECKING:
         # This init is only used for type checking and IDE autocomplete.
         # It will not be included in runtime behavior.

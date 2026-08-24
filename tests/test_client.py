@@ -93,3 +93,30 @@ async def test_ensure_token_exists_headless_error():
         with pytest.raises(AiobaleError) as excinfo:
             await client._ensure_token_exists()
         assert "interactive login is not supported" in str(excinfo.value)
+
+
+import pytest
+from aiobale.types.responses import PhoneAuthResponse, Value
+from aiobale.enums import SendCodeType
+
+
+def test_phone_auth_response_attributes():
+    # Test initialization with code_timeout
+    resp = PhoneAuthResponse(
+        transaction_hash="test_hash_123",
+        is_registered=True,
+        sent_code_type=SendCodeType.SMS,
+        code_expiration_date=Value(value=1750000000000),
+        next_send_code_type=SendCodeType.CALL,
+        code_timeout=Value(value=45),
+    )
+
+    # Test direct and alias attribute accesses
+    assert resp.transaction_hash == "test_hash_123"
+    assert resp.is_registered is True
+    assert resp.sent_code_type == SendCodeType.SMS
+    assert resp.code_timeout.value == 45
+    assert resp.resend_timeout.value == 45
+    assert resp.next_send_code_type == SendCodeType.CALL
+    assert resp.next_code_type == SendCodeType.CALL
+    assert resp.code_expiration_date.value == 1750000000000

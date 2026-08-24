@@ -163,9 +163,22 @@ class PhoneLoginCLI:
         max_attempts = 3
         attempts = 0
         last_sent_time = time.time()
-        cooldown = resp.resend_timeout.value
-        expiration_timestamp = resp.code_expiration_date.value / 1000
-        next_code_type = resp.next_code_type
+        
+        # Safely extract cooldown / resend_timeout
+        cooldown = 60
+        timeout_obj = getattr(resp, "code_timeout", None) or getattr(resp, "resend_timeout", None)
+        if timeout_obj is not None:
+            cooldown = getattr(timeout_obj, "value", timeout_obj) if not isinstance(timeout_obj, (int, float)) else int(timeout_obj)
+
+        # Safely extract expiration timestamp
+        expiration_timestamp = time.time() + 120
+        exp_obj = getattr(resp, "code_expiration_date", None)
+        if exp_obj is not None:
+            raw_exp = getattr(exp_obj, "value", exp_obj) if not isinstance(exp_obj, (int, float)) else float(exp_obj)
+            if raw_exp > 1000000:
+                expiration_timestamp = raw_exp / 1000
+
+        next_code_type = getattr(resp, "next_send_code_type", None) or getattr(resp, "next_code_type", None)
 
         self._print(
             "🔑 Verification code sent! Check your SMS/Bale app.\n"
@@ -265,7 +278,13 @@ class PhoneLoginCLI:
                         return False
 
                     last_sent_time = time.time()
-                    expiration_timestamp = resp.code_expiration_date.value / 1000
+                    exp_obj = getattr(resp, "code_expiration_date", None)
+                    if exp_obj is not None:
+                        raw_exp = getattr(exp_obj, "value", exp_obj) if not isinstance(exp_obj, (int, float)) else float(exp_obj)
+                        if raw_exp > 1000000:
+                            expiration_timestamp = raw_exp / 1000
+                    else:
+                        expiration_timestamp = time.time() + 120
                     self._print("✅ Code resent!\n", "✅ Code dobare ersal shod!\n", Fore.GREEN)
                     continue
 

@@ -8,7 +8,7 @@ warnings.filterwarnings(
     module="google.protobuf.*"
 )
 
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 
 from .client.client import Client
 from .client.manager import ClientManager
