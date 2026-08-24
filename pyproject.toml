@@ -1,6 +1,6 @@
 [project]
 name = "aiobale-py"
-version = "0.2.0"
+version = "0.3.0"
 description = "Modern, fast, fully asynchronous Python framework for Bale Messenger."
 authors = [
     { name = "Amin Madani", email = "aminmadani112@gmail.com" }
@@ -17,6 +17,9 @@ dependencies = [
     "blackboxprotobuf>=1.0.1,<2.0",
     "magic-filter>=1.0,<2.0"
 ]
+
+[project.scripts]
+aiobale = "aiobale.cli.main:main"
 
 [project.urls]
 "Homepage" = "https://github.com/aminmadaniofficial/aiobale"

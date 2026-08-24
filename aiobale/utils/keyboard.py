@@ -27,6 +27,10 @@ class InlineKeyboardBuilder:
     def __init__(self) -> None:
         self._buttons: List[InlineKeyboardButton] = []
 
+    @property
+    def buttons(self) -> List[InlineKeyboardButton]:
+        return self._buttons
+
     def button(
         self,
         text: str,
@@ -42,6 +46,10 @@ class InlineKeyboardBuilder:
 
     def row(self, *buttons: InlineKeyboardButton) -> InlineKeyboardBuilder:
         self._buttons.extend(buttons)
+        return self
+
+    def attach(self, builder: InlineKeyboardBuilder) -> InlineKeyboardBuilder:
+        self._buttons.extend(builder._buttons)
         return self
 
     def adjust(self, *sizes: int) -> List[List[InlineKeyboardButton]]:
@@ -79,12 +87,24 @@ class ReplyKeyboardBuilder:
     def __init__(self) -> None:
         self._buttons: List[ReplyKeyboardButton] = []
 
+    @property
+    def buttons(self) -> List[ReplyKeyboardButton]:
+        return self._buttons
+
     def button(self, text: str) -> ReplyKeyboardBuilder:
         self._buttons.append(ReplyKeyboardButton(text=text))
         return self
 
     def add(self, *buttons: ReplyKeyboardButton) -> ReplyKeyboardBuilder:
         self._buttons.extend(buttons)
+        return self
+
+    def row(self, *buttons: ReplyKeyboardButton) -> ReplyKeyboardBuilder:
+        self._buttons.extend(buttons)
+        return self
+
+    def attach(self, builder: ReplyKeyboardBuilder) -> ReplyKeyboardBuilder:
+        self._buttons.extend(builder._buttons)
         return self
 
     def adjust(self, *sizes: int) -> List[List[ReplyKeyboardButton]]:

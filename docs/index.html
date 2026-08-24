@@ -20,7 +20,7 @@
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
         </div>
         <span class="brand-title">Aiobale</span>
-        <span class="brand-badge">v0.2.0</span>
+        <span class="brand-badge">v0.3.0</span>
       </a>
     </div>
 
@@ -144,6 +144,10 @@
           <li><a href="#command-filter" class="sidebar-link"><span class="sidebar-link-content">فیلتر دستورات (Command)</span></a></li>
           <li><a href="#callback-data" class="sidebar-link"><span class="sidebar-link-content">کال‌بک فکتوری (CallbackData)</span></a></li>
           <li><a href="#client-manager" class="sidebar-link"><span class="sidebar-link-content">مدیریت چنداکانت (ClientManager)</span></a></li>
+          <li><a href="#cli-tools" class="sidebar-link"><span class="sidebar-link-content">ابزار خط فرمان (aiobale CLI)</span></a></li>
+          <li><a href="#keyboard-paginator" class="sidebar-link"><span class="sidebar-link-content">صفحه‌بندی کیبورد (Paginator)</span></a></li>
+          <li><a href="#message-throttler" class="sidebar-link"><span class="sidebar-link-content">کنترل ریت‌لیمیت (Throttler)</span></a></li>
+          <li><a href="#progress-bar" class="sidebar-link"><span class="sidebar-link-content">نوار پیشرفت دانلود/آپلود</span></a></li>
         </ul>
       </div>
 
@@ -915,6 +919,86 @@ manager.add_client(session_file=<span class="hl-str">"account2"</span>, token=<s
 <span class="hl-kw">if</span> __name__ == <span class="hl-str">"__main__"</span>:
     manager.run_all()</code></pre>
         </div>
+
+        <div class="sub-section" id="cli-tools">
+          <h3 class="sub-title">۵. ابزار خط فرمان اختصاصی (aiobale CLI)</h3>
+          <p>با استفاده از دستور <code>aiobale</code> در ترمینال می‌توانید قالب استاندارد ربات بسازید یا فایل‌های سشن را بررسی کنید:</p>
+
+          <div class="code-container">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+              <span>terminal</span>
+              <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+            </div>
+            <pre><code><span class="hl-com"># ساخت یک پروژه ربات جدید و ماژولار با معماری استاندارد</span>
+aiobale startproject my_bale_bot
+
+<span class="hl-com"># مشاهده جزئیات کاربر، توکن و تاریخ انقضا از فایل سشن</span>
+aiobale info my_bale_bot.bale</code></pre>
+          </div>
+        </div>
+
+        <div class="sub-section" id="keyboard-paginator">
+          <h3 class="sub-title">۶. صفحه‌بندی هوشمند دکمه‌های اینلاین (KeyboardPaginator)</h3>
+          <p>ساخت آسان کاتالوگ محصولات، لیست کانال‌ها و منوهای چندصفحه‌ای با دکمه‌های ناوبری قبلی/بعدی:</p>
+
+          <div class="code-container">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+              <span>pagination_demo.py</span>
+              <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+            </div>
+            <pre><code><span class="hl-kw">from</span> aiobale.utils <span class="hl-kw">import</span> KeyboardPaginator
+
+products = [<span class="hl-str">"کتاب پایتون"</span>, <span class="hl-str">"کتاب جنگو"</span>, <span class="hl-str">"کتاب رست"</span>, <span class="hl-str">"کتاب هوش مصنوعی"</span>]
+paginator = KeyboardPaginator(items=products, page_size=2, callback_prefix=<span class="hl-str">"shop"</span>)
+
+<span class="hl-com"># تولید کیبورد اینلاین برای صفحه اول</span>
+markup_page_1 = paginator.get_page(page=1)</code></pre>
+          </div>
+        </div>
+
+        <div class="sub-section" id="message-throttler">
+          <h3 class="sub-title">۷. صف‌بندی ارسال پیام و کنترل ریت‌لیمیت (MessageThrottler)</h3>
+          <p>ارسال امن و پرسرعت پیام‌های انبوه (Broadcast) به هزاران کاربر بدون مواجهه با خطای Flood Wait سرور بله:</p>
+
+          <div class="code-container">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+              <span>broadcast_demo.py</span>
+              <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+            </div>
+            <pre><code><span class="hl-kw">from</span> aiobale.utils <span class="hl-kw">import</span> MessageThrottler
+<span class="hl-kw">from</span> aiobale.enums <span class="hl-kw">import</span> ChatType
+
+throttler = MessageThrottler(rate_limit=0.05) <span class="hl-com"># حداکثر ۲۰ پیام در ثانیه</span>
+
+<span class="hl-kw">async def</span> send_news(user_id):
+    <span class="hl-kw">await</span> client.send_message(user_id, ChatType.USER, <span class="hl-str">"پیام اطلاع‌رسانی ویژه 📢"</span>)
+
+<span class="hl-com"># ارسال همگانی همراه با کال‌بک درصد پیشرفت</span>
+report = <span class="hl-kw">await</span> throttler.broadcast(send_news, user_ids_list)
+print(<span class="hl-str">f"موفق: {report.success_count} / ناموفق: {report.failure_count}"</span>)</code></pre>
+          </div>
+        </div>
+
+        <div class="sub-section" id="progress-bar">
+          <h3 class="sub-title">۸. نوار درصد پیشرفت دانلود و آپلود (create_progress_bar)</h3>
+          <p>نمایش گرافیکی سرعت و درصد پیشرفت انتقال فایل در کنسول بدون نیاز به پکیج‌های اضافی:</p>
+
+          <div class="code-container">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+              <span>upload_progress.py</span>
+              <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+            </div>
+            <pre><code><span class="hl-kw">from</span> aiobale.utils <span class="hl-kw">import</span> create_progress_bar
+
+progress_cb = create_progress_bar(<span class="hl-str">"آپلود ویدیو"</span>)
+file_info = <span class="hl-kw">await</span> client.upload_file(<span class="hl-str">"movie.mp4"</span>, progress_callback=progress_cb)</code></pre>
+          </div>
+        </div>
+
       </section>
 
       <!-- API MESSAGING -->

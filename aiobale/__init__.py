@@ -8,7 +8,7 @@ warnings.filterwarnings(
     module="google.protobuf.*"
 )
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 from .client.client import Client
 from .client.manager import ClientManager
@@ -34,6 +34,9 @@ from .utils.keyboard import (
     ReplyKeyboardButton,
 )
 from .utils.callback_data import CallbackData
+from .utils.paginator import KeyboardPaginator
+from .utils.throttler import MessageThrottler, BroadcastResult
+from .utils.progress import create_progress_bar
 from .filters import Command, CommandObject
 
 F = MagicFilter()
@@ -60,6 +63,10 @@ __all__ = (
     "InlineKeyboardButton",
     "ReplyKeyboardButton",
     "CallbackData",
+    "KeyboardPaginator",
+    "MessageThrottler",
+    "BroadcastResult",
+    "create_progress_bar",
     "Command",
     "CommandObject",
 )
