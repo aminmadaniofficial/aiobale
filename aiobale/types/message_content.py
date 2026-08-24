@@ -136,6 +136,20 @@ class TemplateMessage(BaleObject):
     inline_keyboard_markup: Optional[InlineKeyboardMarkup] = Field(None, alias="5")
     """Optional inline keyboard markup to be attached to the message."""
 
+    @model_validator(mode="before")
+    @classmethod
+    def validate_template(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            ikm = data.get("inline_keyboard_markup") or data.get("5")
+            if ikm is not None and not isinstance(ikm, InlineKeyboardMarkup):
+                if hasattr(ikm, "as_markup"):
+                    ikm = ikm.as_markup()
+                if isinstance(ikm, (list, dict)):
+                    validated_ikm = InlineKeyboardMarkup.model_validate(ikm)
+                    data["inline_keyboard_markup"] = validated_ikm
+                    data.pop("5", None)
+        return data
+
     if TYPE_CHECKING:
         # This __init__ is only used for type checking and IDE autocomplete.
         # It will not be included in runtime behavior.

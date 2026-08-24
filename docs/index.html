@@ -20,7 +20,7 @@
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
         </div>
         <span class="brand-title">Aiobale</span>
-        <span class="brand-badge">v0.3.1</span>
+        <span class="brand-badge">v0.3.2</span>
       </a>
     </div>
 
@@ -148,6 +148,7 @@
           <li><a href="#keyboard-paginator" class="sidebar-link"><span class="sidebar-link-content">صفحه‌بندی کیبورد (Paginator)</span></a></li>
           <li><a href="#message-throttler" class="sidebar-link"><span class="sidebar-link-content">کنترل ریت‌لیمیت (Throttler)</span></a></li>
           <li><a href="#progress-bar" class="sidebar-link"><span class="sidebar-link-content">نوار پیشرفت دانلود/آپلود</span></a></li>
+          <li><a href="#webhook-server" class="sidebar-link"><span class="sidebar-link-content">سرویس وب‌هوک (Webhook)</span></a></li>
         </ul>
       </div>
 
@@ -996,6 +997,33 @@ print(<span class="hl-str">f"موفق: {report.success_count} / ناموفق: {r
 
 progress_cb = create_progress_bar(<span class="hl-str">"آپلود ویدیو"</span>)
 file_info = <span class="hl-kw">await</span> client.upload_file(<span class="hl-str">"movie.mp4"</span>, progress_callback=progress_cb)</code></pre>
+          </div>
+        </div>
+
+        <div class="sub-section" id="webhook-server">
+          <h3 class="sub-title">۹. سرور وب‌هوک غیرهمگام (AiohttpWebhookServer)</h3>
+          <p>برای دریافت رویدادها از طریق وب‌هوک در سرورهای لینوکسی و ابری به جای استفاده از Long Polling:</p>
+
+          <div class="code-container">
+            <div class="code-header">
+              <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+              <span>webhook_server.py</span>
+              <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+            </div>
+            <pre><code><span class="hl-kw">from</span> aiobale <span class="hl-kw">import</span> Client, Dispatcher, AiohttpWebhookServer
+
+dp = Dispatcher()
+client = Client(dp, token=<span class="hl-str">"YOUR_JWT_TOKEN"</span>)
+
+<span class="hl-com"># راه‌اندازی وب‌هوک سرور روی پورت ۸۰۸۰ با کلید امنیتی اختصاصی</span>
+webhook = AiohttpWebhookServer(
+    client=client,
+    path=<span class="hl-str">"/webhook"</span>,
+    secret_token=<span class="hl-str">"secret_key_123"</span>
+)
+
+<span class="hl-kw">if</span> __name__ == <span class="hl-str">"__main__"</span>:
+    webhook.run(host=<span class="hl-str">"0.0.0.0"</span>, port=8080)</code></pre>
           </div>
         </div>
 

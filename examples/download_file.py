@@ -3,7 +3,7 @@ from aiobale.types import Message
 from aiobale.filters import IsDocument
 
 dp = Dispatcher()
-client = Client(dp)
+client = Client(dp, session_file="session.bale")
 
 
 @dp.message(IsDocument())

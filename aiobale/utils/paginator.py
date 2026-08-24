@@ -30,7 +30,7 @@ class KeyboardPaginator(Generic[T]):
         self,
         items: Sequence[T],
         page_size: int = 5,
-        item_button_factory: Optional[Callable[[T, int], InlineKeyboardButton]] = None,
+        item_button_factory: Optional[Callable[[T, int], Union[InlineKeyboardButton, Dict[str, Any]]]] = None,
         callback_prefix: str = "page",
         prev_button_text: str = "◀️ قبلی",
         next_button_text: str = "بعدی ▶️",
@@ -38,7 +38,7 @@ class KeyboardPaginator(Generic[T]):
     ) -> None:
         self.items: List[T] = list(items)
         self.page_size: int = max(1, page_size)
-        self.item_button_factory: Optional[Callable[[T, int], InlineKeyboardButton]] = item_button_factory
+        self.item_button_factory: Optional[Callable[[T, int], Union[InlineKeyboardButton, Dict[str, Any]]]] = item_button_factory
         self.callback_prefix: str = callback_prefix
         self.prev_button_text: str = prev_button_text
         self.next_button_text: str = next_button_text
@@ -58,6 +58,14 @@ class KeyboardPaginator(Generic[T]):
         end_idx = start_idx + self.page_size
         return self.items[start_idx:end_idx]
 
+    def _format_button(self, btn: Any) -> Dict[str, Any]:
+        """Converts any button representation into a valid dictionary for markup."""
+        if isinstance(btn, dict):
+            return btn
+        if hasattr(btn, "model_dump"):
+            return btn.model_dump(exclude_none=True)
+        return {"text": str(btn)}
+
     def get_page(self, page: int = 1) -> List[List[Dict[str, Any]]]:
         """Builds and returns the serialized keyboard markup list of rows for the specified page."""
         page = max(1, min(page, self.total_pages))
@@ -76,7 +84,7 @@ class KeyboardPaginator(Generic[T]):
                     text=str(item),
                     callback_data=f"{self.callback_prefix}:item:{global_idx}",
                 )
-            rows.append([btn.model_dump(exclude_none=True)])
+            rows.append([self._format_button(btn)])
 
         # Navigation row (if more than 1 page)
         if self.total_pages > 1:

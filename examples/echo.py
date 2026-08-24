@@ -2,7 +2,7 @@ from aiobale import Client, Dispatcher
 from aiobale.types import Message
 
 dp = Dispatcher()
-client = Client(dp)
+client = Client(dp, session_file="session.bale")
 
 
 def extract_content(msg: Message):

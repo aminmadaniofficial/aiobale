@@ -903,9 +903,10 @@ class Client:
         content = MessageContent(text=TextMessage(value=text))
 
         if reply_markup:
+            markup_obj = self._build_inline_keyboard(reply_markup)
             content = MessageContent(
                 bot_message=TemplateMessage(
-                    message=content, inline_keyboard_markup=reply_markup
+                    message=content, inline_keyboard_markup=markup_obj
                 )
             )
 
@@ -938,6 +939,17 @@ class Client:
         elif chat_type in (ChatType.PRIVATE, ChatType.BOT):
             return PeerType.PRIVATE
         return PeerType.GROUP
+
+    def _build_inline_keyboard(self, markup: Any) -> Optional[InlineKeyboardMarkup]:
+        if markup is None:
+            return None
+        if isinstance(markup, InlineKeyboardMarkup):
+            return markup
+        if hasattr(markup, "as_markup"):
+            markup = markup.as_markup()
+        if isinstance(markup, (list, dict)):
+            return InlineKeyboardMarkup.model_validate(markup)
+        return None
 
     def _resolve_peer(self, chat: Chat) -> Peer:
         """
@@ -3196,9 +3208,10 @@ class Client:
         content = MessageContent(document=document)
 
         if reply_markup:
+            markup_obj = self._build_inline_keyboard(reply_markup)
             content = MessageContent(
                 bot_message=TemplateMessage(
-                    message=content, inline_keyboard_markup=reply_markup
+                    message=content, inline_keyboard_markup=markup_obj
                 )
             )
 

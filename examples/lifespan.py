@@ -11,7 +11,7 @@ async def lifespan(client: Client):
     
 
 dp = Dispatcher()
-main_client = Client(dispatcher=dp, lifespan=lifespan)
+main_client = Client(dispatcher=dp, session_file="session.bale", lifespan=lifespan)
 
 
 @dp.message()

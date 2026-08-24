@@ -74,3 +74,17 @@ def test_cli_startproject():
         assert (target_path / "handlers" / "common.py").exists()
         assert (target_path / "keyboards" / "inline.py").exists()
         assert (target_path / "middlewares" / "logging.py").exists()
+
+
+from aiobale.webhook import AiohttpWebhookServer
+from aiobale import Client, Dispatcher
+
+
+def test_webhook_server_init():
+    dp = Dispatcher()
+    client = Client(dp, session_file=None, token="dummy_token")
+    server = AiohttpWebhookServer(client, path="/custom_webhook", secret_token="sec123")
+
+    assert server.path == "/custom_webhook"
+    assert server.secret_token == "sec123"
+    assert server.app is not None
