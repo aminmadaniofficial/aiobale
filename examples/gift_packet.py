@@ -1,26 +1,25 @@
+"""
+Gift Packet Example
+دریافت و باز کردن پاکت هدیه / عیدی و ارسال پاسخ تشکر
+"""
 import asyncio
 from aiobale import Client, Dispatcher
 from aiobale.filters import IsGift, IsPrivate
 from aiobale.types import Message
 
 dp = Dispatcher()
-client = Client(dp)
+client = Client(dp, session_file="gift_bot.bale")
 
 
 @dp.message(IsGift(), IsPrivate())
-async def handler(msg: Message):
-    await client.open_gift(msg)
+async def handle_gift(msg: Message):
+    # باز کردن بسته هدیه و دریافت وجه به کیف‌پول
+    open_resp = await client.open_gift(msg)
+    print(f"🎁 بسته هدیه باز شد: {open_resp}")
 
-    await asyncio.sleep(2)
-    await msg.answer("Thanks! That was kind — but let me give it back to you.")
-    
-    packet = msg.content.gift
-    await client.send_gift(
-        msg.chat.id,
-        msg.chat.type,
-        packet.total_amount,
-        "Thanks... I really appreciate it though.",
-    )
+    await asyncio.sleep(1)
+    await msg.answer("خیلی ممنون از بسته هدیه و عیدی شما! 🎁❤️")
 
 
-client.run()
+if __name__ == "__main__":
+    client.run()
