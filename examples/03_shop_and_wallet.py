@@ -1,24 +1,19 @@
 """
 03. Shop & Wallet Example
-کاتالوگ محصولات با صفحه‌بندی هوشمند، دکمه‌های تایپ‌شده و استعلام موجودی کیف‌پول
+کاتالوگ محصولات، استعلام موجودی کیف‌پول و منوی تعاملی فروشگاه
 """
 import asyncio
-from aiobale import Client, Dispatcher, F, Command, CallbackData
+from aiobale import Client, Dispatcher, F, Command
 from aiobale.types import Message
-from aiobale.utils import KeyboardPaginator
+from aiobale.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
-# تعریف داده‌های تایپ‌شده کال‌بک
-class ProductCB(CallbackData, prefix="prod"):
-    action: str
-    product_id: int
-
-PRODUCTS = [
-    {"id": 101, "name": "کتاب پایتون پیشرفته", "price": 250000},
-    {"id": 102, "name": "دوره آموزش FastAPI", "price": 450000},
-    {"id": 103, "name": "کتاب طراحی سیستم", "price": 380000},
-    {"id": 104, "name": "دوره Asyncio در پایتون", "price": 290000},
-    {"id": 105, "name": "آموزش داکر و کوبرنتیز", "price": 500000},
-]
+PRODUCTS = {
+    "🛒 کتاب پایتون پیشرفته": 250000,
+    "🛒 دوره آموزش FastAPI": 450000,
+    "🛒 کتاب طراحی سیستم": 380000,
+    "🛒 دوره Asyncio در پایتون": 290000,
+    "🛒 آموزش داکر و کوبرنتیز": 500000,
+}
 
 dp = Dispatcher()
 client = Client(dp, session_file="session.bale")
@@ -36,24 +31,28 @@ async def check_wallet(msg: Message):
 
 @dp.message(Command("shop", "products"))
 async def show_shop(msg: Message):
-    # ساخت صفحه‌بندی کاتالوگ (۲ محصول در هر صفحه)
-    paginator = KeyboardPaginator(
-        items=PRODUCTS,
-        page_size=2,
-        item_button_factory=lambda item, idx: {
-            "text": f"🛒 {item['name']} - {item['price']:,} ریال",
-            "callback_data": ProductCB(action="buy", product_id=item["id"]).pack()
-        },
-        callback_prefix="shop_page"
-    )
-    markup = paginator.get_page(page=1)
-    await msg.reply("📚 لیست محصولات فروشگاه آموزشی:", reply_markup=markup)
+    # ساخت کیبورد منوی فروشگاه
+    builder = ReplyKeyboardBuilder()
+    for product_name in PRODUCTS.keys():
+        builder.button(text=product_name)
+    builder.button(text="💰 استعلام کیف‌پول")
+    
+    markup = builder.as_markup(2)  # چینش ۲ دکمه در هر سطر
+    await msg.reply("📚 به فروشگاه آموزشی خوش آمدید! محصول مورد نظر را انتخاب کنید:", reply_markup=markup)
 
-@dp.message(ProductCB.filter(F.action == "buy"))
-async def buy_product(event, callback_data: ProductCB):
-    product = next((p for p in PRODUCTS if p["id"] == callback_data.product_id), None)
-    if product:
-        print(f"🛒 درخواست خرید محصول: {product['name']}")
+@dp.message(F.text == "💰 استعلام کیف‌پول")
+async def btn_wallet(msg: Message):
+    await check_wallet(msg)
+
+@dp.message(F.text.startswith("🛒"))
+async def handle_product_select(msg: Message):
+    price = PRODUCTS.get(msg.text)
+    if price:
+        await msg.reply(
+            f"✅ شما محصول «{msg.text}» را انتخاب کردید.\n"
+            f"💵 قیمت: {price:,} ریال\n\n"
+            f"جهت خرید می‌توانید از دستور /wallet موجودی خود را بررسی کنید."
+        )
 
 async def main():
     print("🚀 Shop & Wallet Bot is running...")
