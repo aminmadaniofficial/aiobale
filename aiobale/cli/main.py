@@ -166,10 +166,19 @@ def cmd_session_info(file_path: str) -> None:
         print(Fore.CYAN + f"   - Name: {resp.user.name if resp.user else 'N/A'}")
         print(Fore.CYAN + f"   - Username: @{resp.user.username.value if resp.user and resp.user.username else 'N/A'}")
         
-        jwt_data = parse_jwt(resp.jwt.value) if resp.jwt else {}
-        print(Fore.CYAN + f"   - User ID in JWT: {jwt_data.get('sub', 'N/A')}")
-        print(Fore.CYAN + f"   - Issued At: {jwt_data.get('iat', 'N/A')}")
-        print(Fore.CYAN + f"   - Expires At: {jwt_data.get('exp', 'N/A')}\n")
+        import datetime
+        jwt_res = parse_jwt(resp.jwt.value) if resp.jwt else None
+        payload = jwt_res[0] if (jwt_res and isinstance(jwt_res, tuple)) else {}
+        
+        sub = payload.get("sub", resp.user.id if resp.user else "N/A")
+        iat = payload.get("iat")
+        exp = payload.get("exp")
+        iat_str = datetime.datetime.fromtimestamp(iat).strftime("%Y-%m-%d %H:%M:%S") if iat else "N/A"
+        exp_str = datetime.datetime.fromtimestamp(exp).strftime("%Y-%m-%d %H:%M:%S") if exp else "N/A"
+
+        print(Fore.CYAN + f"   - User ID in JWT: {sub}")
+        print(Fore.CYAN + f"   - Issued At: {iat_str}")
+        print(Fore.CYAN + f"   - Expires At: {exp_str}\n")
     except Exception as e:
         print(Fore.RED + f"❌ Could not parse session file: {e}")
 

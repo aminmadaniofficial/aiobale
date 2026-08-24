@@ -38,6 +38,7 @@ from .utils.paginator import KeyboardPaginator
 from .utils.throttler import MessageThrottler, BroadcastResult
 from .utils.progress import create_progress_bar
 from .filters import Command, CommandObject
+from .webhook import AiohttpWebhookServer
 
 F = MagicFilter()
 
@@ -69,4 +70,5 @@ __all__ = (
     "create_progress_bar",
     "Command",
     "CommandObject",
+    "AiohttpWebhookServer",
 )
