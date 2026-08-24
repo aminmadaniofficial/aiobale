@@ -1,4 +1,5 @@
-from typing import List, Optional, TYPE_CHECKING
+from __future__ import annotations
+from typing import Any, Dict, List, Optional, Union, TYPE_CHECKING
 from pydantic import Field, model_serializer, model_validator
 
 from .base import BaleObject
@@ -22,8 +23,6 @@ class InlineKeyboardButton(BaleObject):
     """Text to be copied to the clipboard when the button is pressed."""
 
     if TYPE_CHECKING:
-        # This __init__ is only used for type checking and IDE autocomplete.
-        # It will not be included in runtime behavior.
         def __init__(
             __pydantic__self__,
             *,
@@ -43,23 +42,16 @@ class InlineKeyboardButton(BaleObject):
 
     @model_validator(mode="before")
     @classmethod
-    def validate_keyboard(cls, data):
-        """
-        Extracts nested field values from the serialized form
-        into the expected flat model structure before validation.
-        """
-        if isinstance(data, dict) and "1" in data:
-            for i in ("2", "3", "9"):
-                if i not in data:
-                    continue
-                data[i] = data[i]["1"]
+    def validate_keyboard(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            if "1" in data and isinstance(data.get("1"), str):
+                for i in ("2", "3", "9"):
+                    if i in data and isinstance(data[i], dict) and "1" in data[i]:
+                        data[i] = data[i]["1"]
         return data
 
     @model_serializer(mode="wrap")
     def ser(self, nxt, info):
-        """
-        Serializes the model into the API's nested alias structure.
-        """
         if not info.by_alias:
             return nxt(self)
 
@@ -82,8 +74,6 @@ class InlineKeyboardMarkup(BaleObject):
     """Two-dimensional array of inline keyboard button rows."""
 
     if TYPE_CHECKING:
-        # This __init__ is only used for type checking and IDE autocomplete.
-        # It will not be included in runtime behavior.
         def __init__(
             __pydantic__self__,
             *,
@@ -94,31 +84,56 @@ class InlineKeyboardMarkup(BaleObject):
 
     @model_validator(mode="before")
     @classmethod
-    def validate_keyboard(cls, data):
-        """
-        Converts the raw serialized button structure from the API
-        into a list of InlineKeyboardButton rows before validation.
-        """
-        if isinstance(data, dict) and "1" in data and isinstance(data["1"], list):
-            raw_buttons = data["1"]
+    def validate_keyboard(cls, data: Any) -> Any:
+        if isinstance(data, list):
+            # 2D list of button dicts or InlineKeyboardButton instances
+            formatted_rows = []
+            for row in data:
+                if isinstance(row, list):
+                    btn_row = []
+                    for b in row:
+                        if isinstance(b, InlineKeyboardButton):
+                            btn_row.append(b)
+                        elif isinstance(b, dict):
+                            btn_row.append(InlineKeyboardButton.model_validate(b))
+                        else:
+                            btn_row.append(InlineKeyboardButton(text=str(b)))
+                    formatted_rows.append(btn_row)
+                elif isinstance(row, (dict, InlineKeyboardButton)):
+                    b = row if isinstance(row, InlineKeyboardButton) else InlineKeyboardButton.model_validate(row)
+                    formatted_rows.append([b])
+            return {"1": formatted_rows}
 
-            keyboard_rows = []
-            for row in raw_buttons:
-                if isinstance(row, dict) and "1" in row:
-                    buttons_dict = row["1"]
-                    btn = InlineKeyboardButton.model_validate(buttons_dict)
-                    keyboard_rows.append([btn])
-                else:
-                    pass
+        if isinstance(data, dict):
+            if "inline_keyboard" in data:
+                return cls.validate_keyboard(data["inline_keyboard"])
+            if "1" in data and isinstance(data["1"], list):
+                raw_buttons = data["1"]
+                keyboard_rows = []
+                for row in raw_buttons:
+                    if isinstance(row, dict) and "1" in row:
+                        buttons_data = row["1"]
+                        if isinstance(buttons_data, list):
+                            btns = [
+                                InlineKeyboardButton.model_validate(b) if isinstance(b, dict) else b
+                                for b in buttons_data
+                            ]
+                            keyboard_rows.append(btns)
+                        elif isinstance(buttons_data, dict):
+                            btn = InlineKeyboardButton.model_validate(buttons_data)
+                            keyboard_rows.append([btn])
+                    elif isinstance(row, list):
+                        btns = [
+                            InlineKeyboardButton.model_validate(b) if isinstance(b, dict) else b
+                            for b in row
+                        ]
+                        keyboard_rows.append(btns)
+                return {"1": keyboard_rows}
 
-            return {"1": keyboard_rows}
         return data
 
     @model_serializer(mode="wrap")
     def ser(self, nxt, info):
-        """
-        Serializes the inline keyboard into the API's nested alias structure.
-        """
         if not info.by_alias:
             return nxt(self)
 
