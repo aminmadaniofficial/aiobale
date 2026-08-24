@@ -3,13 +3,14 @@
 <div align="center">
 
 [![CI Test Suite](https://github.com/aminmadaniofficial/aiobale/actions/workflows/ci.yml/badge.svg)](https://github.com/aminmadaniofficial/aiobale/actions/workflows/ci.yml)
+[![PyPI Version](https://img.shields.io/pypi/v/aiobale-py.svg?color=blue)](https://pypi.org/project/aiobale-py/)
 [![Documentation](https://img.shields.io/badge/Docs-GitHub%20Pages-2563eb?style=flat&logo=github)](https://aminmadaniofficial.github.io/aiobale/)
 [![Python](https://img.shields.io/badge/Python-3.8%20--%203.14-3776AB?style=flat&logo=python)](https://www.python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/aminmadaniofficial/aiobale/blob/main/LICENSE)
 
 **Modern, fast, fully asynchronous Python framework for Bale Messenger.**
 
-[📖 Interactive Documentation](https://aminmadaniofficial.github.io/aiobale/) • [📦 PyPI Package](https://pypi.org/project/aiobale/) • [🚀 Quickstart](#-quickstart) • [✨ Features](#-key-features)
+[📖 Interactive Documentation](https://aminmadaniofficial.github.io/aiobale/) • [📦 PyPI Package](https://pypi.org/project/aiobale-py/) • [🚀 Quickstart](#-quickstart) • [✨ Features](#-key-features)
 
 </div>
 
@@ -24,6 +25,9 @@
 ## ✨ Key Features
 
 - **⚡ Fully Asynchronous:** Built natively on Python `asyncio` for non-blocking I/O and high concurrency.
+- **🧠 Finite State Machine (FSM):** Multi-step conversational form management with `State`, `StatesGroup`, and `FSMContext`.
+- **🛡️ Middlewares Pipeline:** Intercept and process events before/after handlers with `BaseMiddleware`.
+- **⌨️ Fluent Keyboard Builders:** Chainable creation of Inline and Reply keyboards with dynamic grid formatting.
 - **🔮 Magic Filter (`F`):** Powerful expression-based event filtering (e.g. `F.text.startswith("/start")`, `F.chat.type == ChatType.GROUP`).
 - **🔀 Modular Routing:** Organize complex bots across multiple files using `Router` and sub-routers.
 - **🛡️ Full RPC Coverage (79+ Methods):** Complete access to Messaging, Groups, Channels, Contacts, Presence, Reactions, and File APIs.
@@ -37,12 +41,14 @@
 ## 📦 Installation
 
 ```bash
-# Install from PyPI
-pip install aiobale
+# Install officially from PyPI
+pip install aiobale-py
 
 # Or install the latest development version directly from GitHub
 pip install git+https://github.com/aminmadaniofficial/aiobale.git
 ```
+
+> **Note:** The package is installed as `aiobale-py`, while you import it in your Python code directly as `import aiobale` or `from aiobale import Client, Dispatcher, F`.
 
 ---
 
@@ -81,7 +87,44 @@ When you run this script for the first time in your terminal, it will interactiv
 
 ## 🎯 Code Examples
 
-### 1. Group Moderation & Anti-Link Bot
+### 1. Finite State Machine (FSM) Form
+
+```python
+from aiobale import Client, Dispatcher, F
+from aiobale.fsm import State, StatesGroup, FSMContext
+from aiobale.types import Message
+
+class Registration(StatesGroup):
+    name = State()
+    age = State()
+
+dp = Dispatcher()
+client = Client(dp, session_file="fsm_bot")
+
+@dp.message(F.text == "/register")
+async def start_register(msg: Message, state: FSMContext):
+    await state.set_state(Registration.name)
+    await msg.reply("Please enter your name:")
+
+@dp.message(Registration.name)
+async def process_name(msg: Message, state: FSMContext):
+    await state.update_data(name=msg.text)
+    await state.set_state(Registration.age)
+    await msg.reply("Great! Now enter your age:")
+
+@dp.message(Registration.age)
+async def process_age(msg: Message, state: FSMContext):
+    data = await state.get_data()
+    name = data.get("name")
+    age = msg.text
+    await state.clear()
+    await msg.reply(f"Registration complete! Name: {name}, Age: {age}")
+
+if __name__ == "__main__":
+    client.run()
+```
+
+### 2. Group Moderation & Anti-Link Bot
 
 ```python
 import re
@@ -104,31 +147,6 @@ async def ban_user(msg: Message, client: Client):
     if msg.replied_to:
         await client.kick_user(msg.chat.id, msg.replied_to.sender_id)
         await msg.answer("User kicked from group.")
-
-if __name__ == "__main__":
-    client.run()
-```
-
-### 2. Media Downloader Bot
-
-```python
-from aiobale import Client, Dispatcher, F
-from aiobale.types import Message
-
-dp = Dispatcher()
-client = Client(dp, session_file="media_bot")
-
-@dp.message(F.content.document)
-async def handle_document(msg: Message, client: Client):
-    doc = msg.content.document
-    await msg.reply(f"Downloading {doc.name}...")
-    
-    file_bytes = await client.download_file(
-        file_id=doc.file_id,
-        access_hash=doc.access_hash
-    )
-    
-    await msg.reply(f"File downloaded successfully ({len(file_bytes)} bytes)!")
 
 if __name__ == "__main__":
     client.run()

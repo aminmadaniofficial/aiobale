@@ -1,5 +1,5 @@
 [project]
-name = "aiobale"
+name = "aiobale-py"
 version = "0.2.0"
 description = "Modern, fast, fully asynchronous Python framework for Bale Messenger."
 authors = [
@@ -22,6 +22,7 @@ dependencies = [
 "Homepage" = "https://github.com/aminmadaniofficial/aiobale"
 "Repository" = "https://github.com/aminmadaniofficial/aiobale"
 "Documentation" = "https://aminmadaniofficial.github.io/aiobale/"
+"PyPI" = "https://pypi.org/project/aiobale-py/"
 
 [build-system]
 requires = ["setuptools>=61.0"]
