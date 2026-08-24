@@ -1,4 +1,4 @@
-// Aiobale Documentation App Engine
+﻿// Aiobale Documentation App Engine
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   initSidebar();
@@ -26,195 +26,256 @@ function initTheme() {
 }
 
 function updateThemeIcon(theme) {
-  const sunIcon = document.getElementById('sun-icon');
-  const moonIcon = document.getElementById('moon-icon');
-  if (!sunIcon || !moonIcon) return;
-  if (theme === 'dark') {
-    sunIcon.style.display = 'block';
-    moonIcon.style.display = 'none';
+  const themeToggle = document.getElementById('theme-toggle');
+  if (!themeToggle) return;
+
+  if (theme === 'light') {
+    themeToggle.innerHTML = `
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+      </svg>
+    `;
+    themeToggle.setAttribute('title', 'تغییر به تم تاریک');
   } else {
-    sunIcon.style.display = 'none';
-    moonIcon.style.display = 'block';
+    themeToggle.innerHTML = `
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2"></path>
+        <path d="M12 20v2"></path>
+        <path d="m4.93 4.93 1.41 1.41"></path>
+        <path d="m17.66 17.66 1.41 1.41"></path>
+        <path d="M2 12h2"></path>
+        <path d="M20 12h2"></path>
+        <path d="m6.34 17.66-1.41 1.41"></path>
+        <path d="m19.07 4.93-1.41 1.41"></path>
+      </svg>
+    `;
+    themeToggle.setAttribute('title', 'تغییر به تم روشن');
   }
 }
 
-// 2. Sidebar Navigation & Mobile Drawer
+// 2. Mobile Responsive Sidebar Drawer
 function initSidebar() {
-  const menuToggle = document.getElementById('menu-toggle');
+  const mobileToggle = document.getElementById('mobile-menu-toggle');
   const sidebar = document.getElementById('sidebar');
   const backdrop = document.getElementById('sidebar-backdrop');
+  const navLinks = document.querySelectorAll('.sidebar-link');
 
   function openSidebar() {
-    if (!sidebar) return;
-    sidebar.classList.add('open');
-    if (backdrop) backdrop.classList.add('active');
-    document.body.classList.add('sidebar-open');
+    sidebar.classList.add('mobile-open');
+    backdrop.classList.add('active');
+    document.body.style.overflow = 'hidden';
   }
 
   function closeSidebar() {
-    if (!sidebar) return;
-    sidebar.classList.remove('open');
-    if (backdrop) backdrop.classList.remove('active');
-    document.body.classList.remove('sidebar-open');
+    sidebar.classList.remove('mobile-open');
+    backdrop.classList.remove('active');
+    document.body.style.overflow = '';
   }
 
-  if (menuToggle && sidebar) {
-    menuToggle.addEventListener('click', (e) => {
+  if (mobileToggle) {
+    mobileToggle.addEventListener('click', (e) => {
       e.stopPropagation();
-      sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+      if (sidebar.classList.contains('mobile-open')) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
     });
+  }
 
-    if (backdrop) {
-      backdrop.addEventListener('click', closeSidebar);
-    }
+  if (backdrop) {
+    backdrop.addEventListener('click', closeSidebar);
+  }
 
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+  navLinks.forEach((link) => {
+    link.addEventListener('click', () => {
+      if (window.innerWidth <= 1024) {
         closeSidebar();
       }
     });
+  });
 
-    // Close on link click on mobile
-    sidebar.querySelectorAll('a').forEach((link) => {
-      link.addEventListener('click', () => {
-        if (window.innerWidth <= 960) {
-          closeSidebar();
-        }
-      });
-    });
-  }
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 1024 && sidebar.classList.contains('mobile-open')) {
+      closeSidebar();
+    }
+  });
 }
 
-// 3. Search Engine
-const searchIndex = [
-  { title: "معرفی و شروع سریع (Getting Started)", id: "getting-started", category: "مقدمه" },
-  { title: "نصب و پیش‌نیازها (Installation)", id: "installation", category: "شروع" },
-  { title: "اولین ربات در ۵ دقیقه (Quickstart)", id: "quickstart", category: "شروع" },
-  { title: "احراز هویت و مدیریت سشن (Authentication)", id: "authentication", category: "هسته" },
-  { title: "ورود با CLI و شماره تلفن (Phone Login)", id: "phone-login", category: "احراز هویت" },
-  { title: "ورود با توکن پایدار (Token Auth)", id: "token-auth", category: "احراز هویت" },
-  { title: "اجرا در محیط‌های Headless و داکر", id: "headless-auth", category: "احراز هویت" },
-  { title: "معماری کلاینت و چرخه حیات (Client)", id: "client-architecture", category: "کلاینت" },
-  { title: "پیکربندی کلاینت (Client Configuration)", id: "client-config", category: "کلاینت" },
-  { title: "اتصال مجدد خودکار (Auto Reconnect)", id: "client-reconnect", category: "کلاینت" },
-  { title: "دیسپچر و مسیریابی رویدادها (Dispatcher)", id: "dispatcher", category: "رویدادها" },
-  { title: "مدیریت پیام و رویدادها (@dp.message)", id: "dp-handlers", category: "رویدادها" },
-  { title: "روترهای ماژولار (Sub-Routers)", id: "routers", category: "رویدادها" },
-  { title: "تزریق وابستگی (Dependency Injection)", id: "dependency-injection", category: "رویدادها" },
-  { title: "فیلترها و Magic Filter (Filters & F)", id: "filters", category: "فیلترها" },
-  { title: "مجیک فیلتر F (Magic Filter)", id: "magic-filter", category: "فیلترها" },
-  { title: "فیلترهای پیش‌ساخته (IsText, IsDocument, ...)", id: "builtin-filters", category: "فیلترها" },
-  { title: "ترکیب فیلترها (and_f, or_f, invert_f)", id: "logic-filters", category: "فیلترها" },
-  { title: "فیلترهای سفارشی (Custom Filters)", id: "custom-filters", category: "فیلترها" },
-  { title: "مرجع متدهای پیام‌رسانی (Messaging API)", id: "api-messaging", category: "API RPC" },
-  { title: "send_message (ارسال پیام متنی)", id: "method-send-message", category: "پیام‌رسانی" },
-  { title: "send_photo / send_document (ارسال مدیا)", id: "method-send-media", category: "پیام‌رسانی" },
-  { title: "send_voice / send_audio / send_video", id: "method-send-audio-video", category: "پیام‌رسانی" },
-  { title: "edit_message / delete_message / pin_message", id: "method-edit-delete-pin", category: "پیام‌رسانی" },
-  { title: "forward_message / clear_chat / delete_chat", id: "method-forward-clear", category: "پیام‌رسانی" },
-  { title: "مرجع متدهای گروه‌ها و کانال‌ها (Groups API)", id: "api-groups", category: "API RPC" },
-  { title: "create_group / get_full_group", id: "method-create-group", category: "گروه و کانال" },
-  { title: "kick_user / unban_user / get_banned_users", id: "method-kick-ban", category: "مدیریت گروه" },
-  { title: "make_user_admin / set_member_permissions", id: "method-permissions", category: "مدیریت گروه" },
-  { title: "get_group_invite_url / join_group", id: "method-group-links", category: "گروه و کانال" },
-  { title: "مرجع متدهای کاربران و مخاطبین (Users API)", id: "api-users", category: "API RPC" },
-  { title: "get_contacts / add_contact / import_contacts", id: "method-contacts", category: "کاربران" },
-  { title: "block_user / unblock_user / load_users", id: "method-block-users", category: "کاربران" },
-  { title: "edit_name / edit_about / edit_nickname", id: "method-edit-profile", category: "پروفایل" },
-  { title: "مرجع واکنش‌ها و آمار (Abacus API)", id: "api-abacus", category: "واکنش و بازدید" },
-  { title: "مرجع وضعیت و تایپینگ (Presence API)", id: "api-presence", category: "وضعیت آنلاین" },
-  { title: "مرجع فایل‌ها و دانلود/آپلود (Files API)", id: "api-files", category: "فایل و رسانه" },
-  { title: "مرجع تایپ‌ها و مدل‌های داده (Types Reference)", id: "types-reference", category: "مدل‌های داده" },
-  { title: "کلاس Message و متدهای پاسخ کمکی", id: "type-message", category: "مدل داده" },
-  { title: "کلاس‌های Chat, User, Member, FullGroup", id: "type-chat-user", category: "مدل داده" },
-  { title: "مرجع انام‌ها و ثابت‌ها (Enums Reference)", id: "enums-reference", category: "ثابت‌ها" },
-  { title: "ChatType, PeerType, TypingMode, AuthErrors", id: "enums-details", category: "ثابت‌ها" },
-  { title: "پروژه ۱: ربات اکو و پاسخگوی هوشمند", id: "example-echo", category: "پروژه‌های عملی" },
-  { title: "پروژه ۲: ربات مدیریت گروه و ضداسپم", id: "example-admin", category: "پروژه‌های عملی" },
-  { title: "پروژه ۳: ربات دانلودر و آپلودر مدیا", id: "example-downloader", category: "پروژه‌های عملی" },
-  { title: "پروژه ۴: ربات برودکست و زمان‌بندی کانال", id: "example-broadcast", category: "پروژه‌های عملی" },
-  { title: "پروژه ۵: معماری چندروتر و دکمه‌های اینلاین", id: "example-routers", category: "پروژه‌های عملی" },
-  { title: "مدیریت خطاها و عیب‌یابی (Troubleshooting)", id: "troubleshooting", category: "خطاها" },
-];
-
+// 3. Search Engine (Modal & Live Search)
 function initSearch() {
-  const searchBtn = document.getElementById('search-btn');
+  const searchInput = document.getElementById('doc-search');
   const searchModal = document.getElementById('search-modal');
-  const searchInput = document.getElementById('search-input');
-  const searchResults = document.getElementById('search-results');
+  const modalInput = document.getElementById('modal-search-input');
+  const resultsContainer = document.getElementById('search-results');
+  const searchKbd = document.querySelector('.search-kbd');
 
-  if (!searchBtn || !searchModal || !searchInput || !searchResults) return;
+  const index = [];
+  document.querySelectorAll('.doc-section').forEach((section) => {
+    const titleEl = section.querySelector('.section-title');
+    const title = titleEl ? titleEl.innerText.trim() : '';
+    const sectionId = section.getAttribute('id');
+    const descEl = section.querySelector('.section-desc');
+    const desc = descEl ? descEl.innerText.trim() : '';
 
-  function openSearch() {
-    searchModal.classList.add('open');
-    searchInput.value = '';
-    renderResults(searchIndex.slice(0, 8));
-    setTimeout(() => searchInput.focus(), 50);
-  }
+    index.push({
+      id: sectionId,
+      title: title,
+      desc: desc,
+      type: 'بخش اصلی',
+    });
 
-  function closeSearch() {
-    searchModal.classList.remove('open');
-  }
+    section.querySelectorAll('h3, h4').forEach((heading) => {
+      if (heading.innerText.trim()) {
+        index.push({
+          id: heading.id || sectionId,
+          title: heading.innerText.trim(),
+          desc: `در بخش ${title}`,
+          type: 'موضوع',
+        });
+      }
+    });
 
-  searchBtn.addEventListener('click', openSearch);
-
-  searchModal.addEventListener('click', (e) => {
-    if (e.target === searchModal) closeSearch();
+    section.querySelectorAll('.method-item').forEach((item) => {
+      const code = item.querySelector('.method-code');
+      const itemDesc = item.querySelector('.method-desc');
+      if (code) {
+        index.push({
+          id: item.id || sectionId,
+          title: code.innerText.trim(),
+          desc: itemDesc ? itemDesc.innerText.trim() : `متد در ${title}`,
+          type: 'متد API',
+        });
+      }
+    });
   });
+
+  function openSearchModal() {
+    if (!searchModal) return;
+    searchModal.classList.add('active');
+    if (modalInput) {
+      modalInput.value = searchInput ? searchInput.value : '';
+      modalInput.focus();
+      renderResults(modalInput.value);
+    }
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSearchModal() {
+    if (!searchModal) return;
+    searchModal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('focus', openSearchModal);
+    searchInput.addEventListener('click', openSearchModal);
+  }
+
+  if (searchKbd) {
+    searchKbd.addEventListener('click', openSearchModal);
+  }
 
   document.addEventListener('keydown', (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
       e.preventDefault();
-      searchModal.classList.contains('open') ? closeSearch() : openSearch();
-    } else if (e.key === 'Escape' && searchModal.classList.contains('open')) {
-      closeSearch();
-    } else if (e.key === '/' && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
-      e.preventDefault();
-      openSearch();
+      if (searchModal && searchModal.classList.contains('active')) {
+        closeSearchModal();
+      } else {
+        openSearchModal();
+      }
+    }
+    if (e.key === 'Escape' && searchModal && searchModal.classList.contains('active')) {
+      closeSearchModal();
     }
   });
 
-  searchInput.addEventListener('input', (e) => {
-    const q = e.target.value.trim().toLowerCase();
-    if (!q) {
-      renderResults(searchIndex.slice(0, 8));
-      return;
-    }
-    const filtered = searchIndex.filter(item => 
-      item.title.toLowerCase().includes(q) || 
-      item.id.toLowerCase().includes(q) || 
-      item.category.toLowerCase().includes(q)
-    );
-    renderResults(filtered);
-  });
-
-  function renderResults(items) {
-    searchResults.innerHTML = '';
-    if (items.length === 0) {
-      searchResults.innerHTML = '<li style="padding: 20px; text-align: center; color: var(--text-muted);">موردی یافت نشد.</li>';
-      return;
-    }
-    items.forEach(item => {
-      const li = document.createElement('li');
-      li.className = 'search-result-item';
-      li.innerHTML = `
-        <span class="search-result-title">${item.title}</span>
-        <span class="search-result-category">${item.category}</span>
-      `;
-      li.addEventListener('click', () => {
-        closeSearch();
-        const target = document.getElementById(item.id);
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth' });
-          history.pushState(null, null, `#${item.id}`);
-        }
-      });
-      searchResults.appendChild(li);
+  if (searchModal) {
+    searchModal.addEventListener('click', (e) => {
+      if (e.target === searchModal) {
+        closeSearchModal();
+      }
     });
+  }
+
+  if (modalInput) {
+    modalInput.addEventListener('input', (e) => {
+      renderResults(e.target.value);
+    });
+  }
+
+  function renderResults(query) {
+    if (!resultsContainer) return;
+    const cleanQuery = query.trim().toLowerCase();
+
+    if (!cleanQuery) {
+      resultsContainer.innerHTML = `
+        <div class="search-empty">
+          <p>یک کلمه کلیدی، نام کلاس یا متد را برای جستجو وارد کنید...</p>
+        </div>
+      `;
+      return;
+    }
+
+    const matched = index.filter((item) => {
+      return (
+        item.title.toLowerCase().includes(cleanQuery) ||
+        item.desc.toLowerCase().includes(cleanQuery)
+      );
+    });
+
+    if (matched.length === 0) {
+      resultsContainer.innerHTML = `
+        <div class="search-empty">
+          <p>نتیجه‌ای برای «<strong>${escapeHtml(cleanQuery)}</strong>» یافت نشد.</p>
+        </div>
+      `;
+      return;
+    }
+
+    resultsContainer.innerHTML = matched
+      .slice(0, 10)
+      .map((item) => {
+        return `
+        <a href="#${item.id}" class="search-result-item" onclick="document.getElementById('search-modal').classList.remove('active'); document.body.style.overflow='';">
+          <div class="result-badge">${escapeHtml(item.type)}</div>
+          <div class="result-info">
+            <div class="result-title">${highlightText(item.title, cleanQuery)}</div>
+            <div class="result-desc">${highlightText(item.desc, cleanQuery)}</div>
+          </div>
+          <div class="result-arrow">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m15 18-6-6 6-6"/>
+            </svg>
+          </div>
+        </a>
+      `;
+      })
+      .join('');
+  }
+
+  function highlightText(text, query) {
+    if (!query) return escapeHtml(text);
+    const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
+    return escapeHtml(text).replace(regex, '<mark>$1</mark>');
+  }
+
+  function escapeHtml(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function escapeRegex(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
 }
 
-// 4. Copy Code to Clipboard
+// 4. Code Block Copy Buttons
 function initCopyButtons() {
   document.querySelectorAll('.copy-btn').forEach((btn) => {
     btn.addEventListener('click', async () => {
@@ -238,28 +299,56 @@ function initCopyButtons() {
   });
 }
 
-// 5. ScrollSpy & Sidebar Active State
+// 5. ScrollSpy & Sidebar Active State (Exact Element Matching)
 function initScrollSpy() {
-  const sections = document.querySelectorAll('.doc-section');
-  const navLinks = document.querySelectorAll('.sidebar-link');
+  const navLinks = Array.from(document.querySelectorAll('.sidebar-link'));
+  const targets = [];
 
-  window.addEventListener('scroll', () => {
-    let current = '';
-    const scrollPos = window.scrollY + 120;
+  navLinks.forEach((link) => {
+    const href = link.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      const id = href.substring(1);
+      const el = document.getElementById(id);
+      if (el) {
+        targets.push({ id, el, link });
+      }
+    }
+  });
 
-    sections.forEach((section) => {
-      const sectionTop = section.offsetTop;
-      const sectionHeight = section.clientHeight;
-      if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
-        current = section.getAttribute('id');
+  function updateActiveLink() {
+    const scrollPos = window.scrollY + 140;
+    let currentId = null;
+
+    for (let i = targets.length - 1; i >= 0; i--) {
+      const item = targets[i];
+      const top = item.el.getBoundingClientRect().top + window.scrollY;
+      if (scrollPos >= top - 20) {
+        currentId = item.id;
+        break;
+      }
+    }
+
+    if (!currentId && targets.length > 0 && window.scrollY < 200) {
+      currentId = targets[0].id;
+    }
+
+    targets.forEach((item) => {
+      if (item.id === currentId) {
+        item.link.classList.add('active');
+      } else {
+        item.link.classList.remove('active');
       }
     });
+  }
 
-    navLinks.forEach((link) => {
-      link.classList.remove('active');
-      if (current && link.getAttribute('href') === `#${current}`) {
-        link.classList.add('active');
-      }
+  window.addEventListener('scroll', updateActiveLink, { passive: true });
+  updateActiveLink();
+
+  // Add instant active state toggle on direct click
+  navLinks.forEach((link) => {
+    link.addEventListener('click', function () {
+      navLinks.forEach((l) => l.classList.remove('active'));
+      this.classList.add('active');
     });
   });
 }

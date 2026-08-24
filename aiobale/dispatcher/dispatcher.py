@@ -72,7 +72,8 @@ class Dispatcher(Router):
 
         handlers = self.get_handlers(event_type)
         for handler in handlers:
-            if await handler.check(*args, **kwargs):
+            is_matched, handler_data = await handler.check(*args, **kwargs)
+            if is_matched:
                 async def _call(evt: Any, data: Dict[str, Any]) -> Any:
                     return await handler.call(evt, **data)
 
@@ -86,6 +87,6 @@ class Dispatcher(Router):
 
                     pipeline = _wrap
 
-                return await pipeline(event, kwargs)
+                return await pipeline(event, handler_data)
 
         return None

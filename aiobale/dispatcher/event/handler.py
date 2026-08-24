@@ -6,7 +6,7 @@ from functools import partial
 import inspect
 from dataclasses import dataclass, field
 from magic_filter.magic import MagicFilter as OriginalMagicFilter
-from typing import Awaitable, Callable, Optional, Any, List, TypeVar, Union
+from typing import Awaitable, Callable, Optional, Any, List, TypeVar, Union, Dict, Tuple
 from typing_extensions import ParamSpec
 
 from ...filters.base import Filter
@@ -33,19 +33,29 @@ class CallableObject:
         callback = inspect.unwrap(self.callback)
         sig = inspect.signature(callback)
         filtered_kwargs = {}
-        
-        for name, param in sig.parameters.items():
-            if name in kwargs:
-                filtered_kwargs[name] = kwargs[name]
-            else:
-                annotation = param.annotation
-                annotation_name = (
-                    annotation
-                    if isinstance(annotation, str)
-                    else getattr(annotation, "__name__", None)
-                )
-                if annotation_name == "Client" and "client" in kwargs:
-                    filtered_kwargs[name] = kwargs["client"]
+        has_var_keyword = any(
+            p.kind == inspect.Parameter.VAR_KEYWORD for p in sig.parameters.values()
+        )
+
+        if has_var_keyword:
+            filtered_kwargs = dict(kwargs)
+        else:
+            for name, param in sig.parameters.items():
+                if name in kwargs:
+                    filtered_kwargs[name] = kwargs[name]
+                else:
+                    annotation = param.annotation
+                    annotation_name = (
+                        annotation
+                        if isinstance(annotation, str)
+                        else getattr(annotation, "__name__", None)
+                    )
+                    if annotation_name == "Client" and "client" in kwargs:
+                        filtered_kwargs[name] = kwargs["client"]
+                    elif annotation_name == "FSMContext" and "state" in kwargs:
+                        filtered_kwargs[name] = kwargs["state"]
+                    elif annotation_name == "CommandObject" and "command" in kwargs:
+                        filtered_kwargs[name] = kwargs["command"]
 
         wrapped = partial(callback, *args, **filtered_kwargs)
         if self.awaitable:
@@ -63,8 +73,6 @@ class FilterObject(CallableObject):
 
     def __post_init__(self) -> None:
         if isinstance(self.callback, OriginalMagicFilter):
-            # MagicFilter instance is callable but generates
-            # only "CallOperation" instead of applying the filter
             self.magic = self.callback
             self.callback = self.callback.resolve
 
@@ -77,17 +85,20 @@ class FilterObject(CallableObject):
 @dataclass
 class Handler(CallableObject):
     """
-    A class that represents an event handler with associated filters and a callback.
+    Represents an event handler with associated filters and callback.
     """
 
     event_type: str
     filters: Optional[List[FilterObject]] = None
 
-    async def check(self, *args: Any, **kwargs: Any) -> bool:
+    async def check(self, *args: Any, **kwargs: Any) -> Tuple[bool, Dict[str, Any]]:
+        data = dict(kwargs)
         if not self.filters:
-            return True
+            return True, data
         for event_filter in self.filters:
-            check = await event_filter.call(*args, **kwargs)
+            check = await event_filter.call(*args, **data)
             if not check:
-                return False
-        return True
+                return False, data
+            if isinstance(check, dict):
+                data.update(check)
+        return True, data

@@ -1,8 +1,7 @@
 from .state import State, StatesGroup, default_state, any_state
 from .context import FSMContext
 from .filter import StateFilter
-from .storage.base import BaseStorage
-from .storage.memory import MemoryStorage
+from .storage import BaseStorage, MemoryStorage, SQLiteStorage
 
 __all__ = (
     "State",
@@ -13,4 +12,5 @@ __all__ = (
     "StateFilter",
     "BaseStorage",
     "MemoryStorage",
+    "SQLiteStorage",
 )

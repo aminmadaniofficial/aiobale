@@ -11,6 +11,7 @@ warnings.filterwarnings(
 __version__ = "0.2.0"
 
 from .client.client import Client
+from .client.manager import ClientManager
 from .dispatcher.dispatcher import Dispatcher
 from .dispatcher.router import Router
 from .utils.magic_filter import MagicFilter
@@ -23,6 +24,7 @@ from .fsm import (
     StateFilter,
     BaseStorage,
     MemoryStorage,
+    SQLiteStorage,
 )
 from .middlewares import BaseMiddleware
 from .utils.keyboard import (
@@ -31,12 +33,15 @@ from .utils.keyboard import (
     InlineKeyboardButton,
     ReplyKeyboardButton,
 )
+from .utils.callback_data import CallbackData
+from .filters import Command, CommandObject
 
 F = MagicFilter()
 
 __all__ = (
     "__version__",
     "Client",
+    "ClientManager",
     "Dispatcher",
     "Router",
     "F",
@@ -48,9 +53,13 @@ __all__ = (
     "StateFilter",
     "BaseStorage",
     "MemoryStorage",
+    "SQLiteStorage",
     "BaseMiddleware",
     "InlineKeyboardBuilder",
     "ReplyKeyboardBuilder",
     "InlineKeyboardButton",
     "ReplyKeyboardButton",
+    "CallbackData",
+    "Command",
+    "CommandObject",
 )

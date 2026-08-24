@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 import time
 from colorama import Fore, init
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, Union
 
 from ..exceptions import AiobaleError
 from ..enums import SendCodeType, AuthErrors
@@ -19,17 +19,13 @@ class PhoneLoginCLI:
     """
     CLI for phone-based login using aiobale.
     Default UI language is English.
-    If the user types 'fin', all subsequent messages are shown using the provided
-    Fingilish (fa) strings. If the user types 'en', UI returns to English strings.
+    If the user types 'fin', all subsequent messages are shown using Fingilish.
     """
 
     def __init__(self, client: Client):
         self.client = client
-        self.fingilish_mode = False  # off by default
+        self.fingilish_mode = False
 
-    # ---------------------------
-    # Output & input helpers
-    # ---------------------------
     def _print(self, en: str, fa: str, color=Fore.WHITE):
         msg = fa if self.fingilish_mode else en
         print(color + msg)
@@ -38,10 +34,32 @@ class PhoneLoginCLI:
         prompt = fa_prompt if self.fingilish_mode else en_prompt
         return input(color + prompt)
 
-    # ---------------------------
-    # Flow
-    # ---------------------------
+    @staticmethod
+    def normalize_phone_number(raw: Union[str, int]) -> int:
+        s = str(raw).strip().replace("+", "")
+        if s.startswith("09"):
+            s = "98" + s[1:]
+        elif s.startswith("00"):
+            s = s[2:]
+        return int(s)
+
     async def start(self):
+        if getattr(self.client, "phone_number", None):
+            try:
+                phone_number = self.normalize_phone_number(self.client.phone_number)
+                self._print(
+                    f"📱 Using configured phone number: {phone_number}\n",
+                    f"📱 Estefadeh az shomare telefon dakhel code: {phone_number}\n",
+                    Fore.CYAN,
+                )
+                resp = await self._send_login_request(phone_number)
+                if resp:
+                    success = await self._handle_code_entry(resp, phone_number)
+                    if success:
+                        return
+            except Exception as e:
+                self._print(f"⚠️ Phone error: {e}\n", f"⚠️ Khata dar shomare: {e}\n", Fore.RED)
+
         while True:
             phone_number = await self._request_phone_number()
             resp = await self._send_login_request(phone_number)
@@ -51,14 +69,13 @@ class PhoneLoginCLI:
             if success:
                 break
 
-    async def _request_phone_number(self):
-        # Explain both in EN (default) and FA (for fin mode)
+    async def _request_phone_number(self) -> int:
         self._print(
             "📱 Enter your phone number in international format:\n"
-            "   Example for Iran: 98XXXXXXXXXX (without the + sign)\n"
+            "   Example for Iran: 98XXXXXXXXXX or 09XXXXXXXXX\n"
             "   Type 'fin' anytime to switch to Fingilish\n",
-            "📱 Shomare telefon ro be format beynolmelali vared kon:\n"
-            "   Mesal baraye Iran: 98XXXXXXXXXX (bedone +)\n"
+            "📱 Shomare telefon ro be format beynolmelali ya ba 09 vared kon:\n"
+            "   Mesal baraye Iran: 98XXXXXXXXXX ya 09XXXXXXXXX\n"
             "   Agar mikhay zaban en beshe bezan: en\n",
             Fore.CYAN,
         )
@@ -76,8 +93,10 @@ class PhoneLoginCLI:
                 self._print("✅ English mode ON.\n", "✅ Halat English fa'al shod.\n", Fore.GREEN)
                 continue
 
-            if raw.isdigit():
-                return int(raw)
+            try:
+                return self.normalize_phone_number(raw)
+            except Exception:
+                pass
 
             self._print(
                 "❌ Invalid phone number format. Please check and try again.\n",
@@ -93,77 +112,87 @@ class PhoneLoginCLI:
         try:
             resp = await self.client.start_phone_auth(phone_number, code_type=code_type)
         except AiobaleError as e:
-            # handle library-specific errors gracefully
             self._print(
                 f"⚠️ Aiobale error while starting phone auth: {e}\n",
                 f"⚠️ Khata dar zaman ersal darkhast auth: {e}\n",
                 Fore.RED,
             )
             return None
+        except Exception as e:
+            self._print(
+                f"⚠️ Network/System error: {e}\n",
+                f"⚠️ Khataye shabake/system: {e}\n",
+                Fore.RED,
+            )
+            return None
 
         if isinstance(resp, AuthErrors):
-            if resp == AuthErrors.NUMBER_BANNED:
+            if resp == AuthErrors.PHONE_NUMBER_BANNED:
                 self._print(
-                    "🚫 This phone number is banned. Please try another number.\n",
-                    "🚫 In shomare ban shode. shomare digari emtehan kon.\n",
+                    "❌ This phone number has been banned by Bale.\n",
+                    "❌ In shomare tavasote bale ban shode ast.\n",
                     Fore.RED,
                 )
-            elif resp == AuthErrors.RATE_LIMIT:
+                return None
+            elif resp == AuthErrors.PHONE_NUMBER_UNREGISTERED:
                 self._print(
-                    "🚫 Too many attempts! Please wait a while before trying again.\n",
-                    "🚫 Talash ziad shod! kami sabr kon va dobare emtehan kon.\n",
+                    "❌ This phone number is not registered in Bale. Please sign up via official app first.\n",
+                    "❌ In shomare sabt nam nashode. Aval dakhele barname bale sabt nam konid.\n",
                     Fore.RED,
                 )
-            elif resp == AuthErrors.INVALID:
+                return None
+            elif resp == AuthErrors.FLOOD:
                 self._print(
-                    "❌ Invalid phone number format. Please check and try again.\n",
-                    "❌ Format shomare namotabar. check kon va tekrar kon.\n",
-                    Fore.MAGENTA,
+                    "⚠️ Too many requests. Please wait a while before trying again.\n",
+                    "⚠️ Tedade darkhast ziad bode. kami sabr konid va mojadadan talash konid.\n",
+                    Fore.YELLOW,
                 )
+                return None
             else:
                 self._print(
-                    "ℹ️ An unknown authentication error occurred.\n",
-                    "ℹ️ Khataye gheire moshakhas dar ehraze hoviat pish amad.\n",
-                    Fore.CYAN,
+                    f"⚠️ Unknown auth error: {resp}\n",
+                    f"⚠️ Khataye na moshakhas: {resp}\n",
+                    Fore.YELLOW,
                 )
-            return None
+                return None
+
         return resp
 
-    async def _handle_code_entry(self, resp: PhoneAuthResponse, phone_number: int):
+    async def _handle_code_entry(self, resp: PhoneAuthResponse, phone_number: int) -> bool:
         max_attempts = 3
         attempts = 0
-        expiration_timestamp = resp.code_expiration_date.value / 1000
         last_sent_time = time.time()
-        next_code_type = resp.next_send_code_type
+        cooldown = resp.resend_timeout.value
+        expiration_timestamp = resp.code_expiration_date.value / 1000
+        next_code_type = resp.next_code_type
 
-        self._print("✅ Code sent!", "✅ code ersal shod!", Fore.GREEN)
         self._print(
-            "🔑 Enter your code. Available commands:\n"
-            "   'resend'  - request a new code\n"
-            "   'restart' - enter your phone number again\n"
-            "   'fin'     - enable Fingilish mode\n"
-            "   'en'      - switch back to English\n",
-            "🔑 Code ra vared kon. dasturat:\n"
-            "   'resend' - Ersal dobare\n"
-            "   'restart' - Vorood-e dobare shomare\n"
-            "   'fin' - Raftan be zaban fingilishi\n"
-            "   'en' - Raftan be zaban en\n",
+            "🔑 Verification code sent! Check your SMS/Bale app.\n"
+            "   Commands available during code entry:\n"
+            "     - 'resend'  : request a new code (after cooldown)\n"
+            "     - 'restart' : enter a different phone number\n"
+            "     - 'fin'/'en': toggle language\n",
+            "🔑 Code ersal shod! SMS ya barname bale ro check konid.\n"
+            "   Dastoorat ghabel estefade:\n"
+            "     - 'resend'  : ersale mojaddade code (pas az payane zaman)\n"
+            "     - 'restart' : vared kardane yek shomare dige\n"
+            "     - 'fin'/'en': taghire zaban\n",
             Fore.CYAN,
         )
 
-        while True:
-            if time.time() > expiration_timestamp:
-                self._print(
-                    "⌛ Code expired. Restarting phone entry...\n",
-                    "⌛ Zaman code tamoom shod. Bargasht be marhale shomare...\n",
-                    Fore.RED,
-                )
-                return False
-
+        while attempts < max_attempts:
             try:
-                remaining_time = expiration_timestamp - time.time()
-                cooldown = resp.code_timeout.value
-                elapsed = time.time() - last_sent_time
+                now = time.time()
+                remaining_time = expiration_timestamp - now
+                elapsed = now - last_sent_time
+
+                if remaining_time <= 0:
+                    self._print(
+                        "⏰ Code has expired. Restarting phone entry...\n",
+                        "⏰ Mohlate code tamam shod. Bargasht be marhale shomare...\n",
+                        Fore.RED,
+                    )
+                    return False
 
                 self._print(
                     f"⏳ Time left before expiration: {int(remaining_time)} sec",
@@ -193,7 +222,6 @@ class PhoneLoginCLI:
 
                 code = code.strip().lower()
 
-                # language toggles first
                 if code == "fin":
                     self.fingilish_mode = True
                     self._print("✅ Fingilish mode ON.", "✅ Halat Fingilish fa'al shod.", Fore.GREEN)
@@ -240,7 +268,6 @@ class PhoneLoginCLI:
                     self._print("✅ Code resent!\n", "✅ Code dobare ersal shod!\n", Fore.GREEN)
                     continue
 
-                # Validate the code (with AiobaleError handling)
                 try:
                     res = await self.client.validate_code(code, resp.transaction_hash)
                 except AiobaleError as e:
@@ -319,7 +346,6 @@ class PhoneLoginCLI:
                 )
                 return False
 
-            # Validate password with AiobaleError handling
             try:
                 res = await self.client.validate_password(password.strip(), transaction_hash)
             except AiobaleError as e:

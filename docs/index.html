@@ -123,6 +123,32 @@
 
       <div class="sidebar-group">
         <div class="sidebar-group-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          ماشین وضعیت و میدلورها (FSM)
+        </div>
+        <ul class="sidebar-links">
+          <li><a href="#fsm-overview" class="sidebar-link"><span class="sidebar-link-content">ماشین وضعیت (FSM)</span></a></li>
+          <li><a href="#fsm-states" class="sidebar-link"><span class="sidebar-link-content">تعریف State و StatesGroup</span></a></li>
+          <li><a href="#fsm-storages" class="sidebar-link"><span class="sidebar-link-content">استوریج‌ها (Memory & SQLite)</span></a></li>
+          <li><a href="#middlewares" class="sidebar-link"><span class="sidebar-link-content">معماری میدلورها (Middlewares)</span></a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+          ابزارهای پیشرفته (Advanced)
+        </div>
+        <ul class="sidebar-links">
+          <li><a href="#keyboard-builders" class="sidebar-link"><span class="sidebar-link-content">کیبورد سازها (Builders)</span></a></li>
+          <li><a href="#command-filter" class="sidebar-link"><span class="sidebar-link-content">فیلتر دستورات (Command)</span></a></li>
+          <li><a href="#callback-data" class="sidebar-link"><span class="sidebar-link-content">کال‌بک فکتوری (CallbackData)</span></a></li>
+          <li><a href="#client-manager" class="sidebar-link"><span class="sidebar-link-content">مدیریت چنداکانت (ClientManager)</span></a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
           مرجع کامل API (RPC)
         </div>
@@ -323,8 +349,8 @@ client = Client(dp, session_file=<span class="hl-str">"my_bot"</span>)
           <p class="section-subtitle">راهنمای انواع روش‌های لاگین، کار با توکن‌ها و فایل‌های سشن</p>
         </div>
 
-        <h3 id="phone-login" class="sub-heading">۱. ورود تعاملی با CLI و شماره تلفن</h3>
-        <p>اگر توکنی مشخص نکرده باشید و فایل سشن وجود نداشته باشد، کتابخانه به صورت خودکار رابط ترمینالی ورود را فعال می‌کند:</p>
+        <h3 id="phone-login" class="sub-heading">۱. ورود با شماره تلفن و CLI</h3>
+        <p>می‌توانید شماره تلفن را مستقیماً در کد پاس دهید تا فقط کد تایید پیامک‌شده در ترمینال پرسیده شود، یا بدون شماره فراخوانی کنید تا ورود کامل تعاملی باشد:</p>
 
         <div class="code-container">
           <div class="code-header">
@@ -334,9 +360,14 @@ client = Client(dp, session_file=<span class="hl-str">"my_bot"</span>)
           </div>
           <pre><code><span class="hl-kw">from</span> aiobale <span class="hl-kw">import</span> Client
 
-<span class="hl-com"># ذخیره سشن در فایل my_account.bale</span>
-client = Client(session_file=<span class="hl-str">"my_account"</span>)
-<span class="hl-com"># با فراخوانی client.start()، در ترمینال شماره و کد تایید پرسیده می‌شود</span></code></pre>
+<span class="hl-com"># ۱. پاس دادن مستقیم شماره در کد (پرسش فقط برای کد تایید پیامکی)</span>
+client = Client(session_file=<span class="hl-str">"my_account"</span>, phone_number=<span class="hl-str">"09123456789"</span>)
+
+<span class="hl-com"># ۲. یا لاگین تعاملی کامل با پرسش شماره و کد در ترمینال</span>
+<span class="hl-com"># client = Client(session_file="my_account")</span>
+
+<span class="hl-kw">if</span> __name__ == <span class="hl-str">"__main__"</span>:
+    client.run()</code></pre>
         </div>
 
         <h3 id="token-auth" class="sub-heading">۲. ورود با توکن JWT از پیش موجود</h3>
@@ -687,6 +718,200 @@ client = Client(dp, session_file=<span class="hl-str">"bot"</span>)</code></pre>
 <span class="hl-dec">@dp.message(AdminOnly([111222, 333444]))</span>
 <span class="hl-kw">async def</span> <span class="hl-fn">admin_handler</span>(msg: Message):
     <span class="hl-kw">await</span> msg.reply(<span class="hl-str">"دسترسی ادمین تایید شد."</span>)</code></pre>
+        </div>
+      </section>
+
+      <!-- FSM & MIDDLEWARES -->
+      <section id="fsm-overview" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            ماشین وضعیت و میدلورها (FSM & Middlewares)
+          </h2>
+          <p class="section-subtitle">مدیریت گفتگوهای چندمرحله‌ای، فرم‌ها، سبد خرید و پایپ‌لاین رهگیری پیام‌ها</p>
+        </div>
+
+        <h3 id="fsm-states" class="sub-heading">۱. تعریف مراحل با StatesGroup و FSMContext</h3>
+        <p>با ارث‌بری از <code>StatesGroup</code> وضعیت‌های گفتگو را تعریف کنید و در هندلرها با <code>state: FSMContext</code> داده‌ها را ذخیره و فراخوانی نمایید:</p>
+
+        <div class="code-container">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+            <span>fsm_form.py</span>
+            <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+          </div>
+          <pre><code><span class="hl-kw">from</span> aiobale <span class="hl-kw">import</span> Client, Dispatcher, F
+<span class="hl-kw">from</span> aiobale.fsm <span class="hl-kw">import</span> State, StatesGroup, FSMContext
+<span class="hl-kw">from</span> aiobale.types <span class="hl-kw">import</span> Message
+
+<span class="hl-kw">class</span> <span class="hl-cls">OrderForm</span>(StatesGroup):
+    choosing_item = State()
+    choosing_quantity = State()
+
+dp = Dispatcher()
+
+<span class="hl-dec">@dp.message(F.text == "/order")</span>
+<span class="hl-kw">async def</span> start_order(msg: Message, state: FSMContext):
+    <span class="hl-kw">await</span> state.set_state(OrderForm.choosing_item)
+    <span class="hl-kw">await</span> msg.reply(<span class="hl-str">"نام محصول را وارد کنید:"</span>)
+
+<span class="hl-dec">@dp.message(OrderForm.choosing_item)</span>
+<span class="hl-kw">async def</span> item_chosen(msg: Message, state: FSMContext):
+    <span class="hl-kw">await</span> state.update_data(item_name=msg.text)
+    <span class="hl-kw">await</span> state.set_state(OrderForm.choosing_quantity)
+    <span class="hl-kw">await</span> msg.reply(<span class="hl-str">"تعداد مورد نظر را وارد کنید:"</span>)
+
+<span class="hl-dec">@dp.message(OrderForm.choosing_quantity)</span>
+<span class="hl-kw">async def</span> quantity_chosen(msg: Message, state: FSMContext):
+    data = <span class="hl-kw">await</span> state.get_data()
+    item = data.get(<span class="hl-str">"item_name"</span>)
+    <span class="hl-kw">await</span> state.clear()
+    <span class="hl-kw">await</span> msg.reply(<span class="hl-str">f"سفارش شما برای {msg.text} عدد {item} ثبت شد!"</span>)</code></pre>
+        </div>
+
+        <h3 id="fsm-storages" class="sub-heading">۲. استوریج‌های پایدار: SQLiteStorage</h3>
+        <p>به طور پیش‌فرض داده‌های FSM در رم ذخیره می‌شوند. برای جلوگیری از پاک شدن وضعیت کاربران هنگام ری‌استارت، از <code>SQLiteStorage</code> استفاده کنید:</p>
+
+        <div class="code-container">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+            <span>persistent_storage.py</span>
+            <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+          </div>
+          <pre><code><span class="hl-kw">from</span> aiobale <span class="hl-kw">import</span> Dispatcher, SQLiteStorage
+
+<span class="hl-com"># ذخیره دائمی وضعیت‌ها در دیتابیس SQLite</span>
+storage = SQLiteStorage(<span class="hl-str">"fsm_data.db"</span>)
+dp = Dispatcher(storage=storage)</code></pre>
+        </div>
+
+        <h3 id="middlewares" class="sub-heading">۳. پایپ‌لاین میدلورها (BaseMiddleware)</h3>
+        <p>برای کنترل نرخ درخواست‌ها (Rate Limiting)، آمارگیری، احراز هویت و لاگینگ قبل از اجرای هر هندلر:</p>
+
+        <div class="code-container">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+            <span>custom_middleware.py</span>
+            <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+          </div>
+          <pre><code><span class="hl-kw">from</span> aiobale <span class="hl-kw">import</span> Dispatcher, BaseMiddleware
+<span class="hl-kw">from</span> typing <span class="hl-kw">import</span> Any, Callable, Dict, Awaitable
+
+<span class="hl-kw">class</span> <span class="hl-cls">LoggingMiddleware</span>(BaseMiddleware):
+    <span class="hl-kw">async def</span> <span class="hl-def">__call__</span>(
+        self,
+        handler: Callable[[Any, Dict[str, Any]], Awaitable[Any]],
+        event: Any,
+        data: Dict[str, Any]
+    ) -> Any:
+        print(<span class="hl-str">f"دریافت رویداد: {event}"</span>)
+        result = <span class="hl-kw">await</span> handler(event, data)
+        print(<span class="hl-str">"پردازش هندلر به اتمام رسید."</span>)
+        <span class="hl-kw">return</span> result
+
+dp = Dispatcher()
+dp.middleware(LoggingMiddleware())</code></pre>
+        </div>
+      </section>
+
+      <!-- ADVANCED UTILITIES -->
+      <section id="keyboard-builders" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+            ابزارهای پیشرفته (Advanced Utilities)
+          </h2>
+          <p class="section-subtitle">کیبورد سازها، پارسر دستورات، کال‌بک فکتوری و اجرای همزمان چنداکانت</p>
+        </div>
+
+        <h3 class="sub-heading">۱. کیبورد سازهای زنجیره‌ای (Keyboard Builders)</h3>
+        <p>ساخت سریع کیبوردهای شیشه‌ای و معمولی با متدهای متوالی و چینش ماتریسی دلخواه:</p>
+
+        <div class="code-container">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+            <span>keyboards_demo.py</span>
+            <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+          </div>
+          <pre><code><span class="hl-kw">from</span> aiobale.utils.keyboard <span class="hl-kw">import</span> InlineKeyboardBuilder, ReplyKeyboardBuilder
+
+<span class="hl-com"># کیبورد شیشه‌ای (Inline)</span>
+builder = InlineKeyboardBuilder()
+builder.button(text=<span class="hl-str">"🌐 وبسایت رسمی"</span>, url=<span class="hl-str">"https://aiobale.ir"</span>)
+builder.button(text=<span class="hl-str">"دکمه ۱"</span>, callback_data=<span class="hl-str">"cb_1"</span>)
+builder.button(text=<span class="hl-str">"دکمه ۲"</span>, callback_data=<span class="hl-str">"cb_2"</span>)
+inline_kb = builder.as_markup(2, 1)  <span class="hl-com"># سطر اول ۲ تا، سطر دوم ۱ دکمه</span>
+
+<span class="hl-com"># کیبورد معمولی (Reply)</span>
+reply = ReplyKeyboardBuilder()
+reply.button(text=<span class="hl-str">"👤 پروفایل کاربری"</span>)
+reply.button(text=<span class="hl-str">"🛍️ فروشگاه"</span>)
+reply_kb = reply.as_markup(2)</code></pre>
+        </div>
+
+        <h3 id="command-filter" class="sub-heading">۲. فیلتر پیشرفته دستورات (Command Filter & CommandObject)</h3>
+        <p>پارس خودکار نام دستور، پیشوند (مانند <code>/</code> یا <code>!</code>) و آرگومان‌های ارسالی با تزریق به هندلر:</p>
+
+        <div class="code-container">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+            <span>commands_demo.py</span>
+            <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+          </div>
+          <pre><code><span class="hl-kw">from</span> aiobale <span class="hl-kw">import</span> Command, CommandObject
+<span class="hl-kw">from</span> aiobale.types <span class="hl-kw">import</span> Message
+
+<span class="hl-dec">@dp.message(Command("ban", "kick", prefix="/!"))</span>
+<span class="hl-kw">async def</span> admin_command(msg: Message, command: CommandObject):
+    print(command.prefix)     <span class="hl-com"># پیشوند استفاده شده مثلا '!'</span>
+    print(command.command)    <span class="hl-com"># نام دستور مثلا 'ban'</span>
+    print(command.args)       <span class="hl-com"># رشته کامل آرگومان‌ها</span>
+    print(command.args_list)  <span class="hl-com"># لیست آرگومان‌ها به صورت تک‌تک</span>
+    <span class="hl-kw">await</span> msg.reply(<span class="hl-str">f"دستور {command.command} دریافت شد."</span>)</code></pre>
+        </div>
+
+        <h3 id="callback-data" class="sub-heading">۳. کال‌بک فکتوری با مدل‌های تایپ‌شده (CallbackData)</h3>
+        <p>تعریف ساختار داده‌ای تمیز برای دکمه‌ها و فیلترگذاری بدون پردازش دستی رشته‌ها:</p>
+
+        <div class="code-container">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+            <span>callback_factory.py</span>
+            <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+          </div>
+          <pre><code><span class="hl-kw">from</span> aiobale <span class="hl-kw">import</span> CallbackData, F
+
+<span class="hl-kw">class</span> <span class="hl-cls">ProductCB</span>(CallbackData, prefix=<span class="hl-str">"product"</span>):
+    action: str
+    product_id: int
+
+<span class="hl-com"># تولید دیتای دکمه: product:view:99</span>
+data_str = ProductCB(action=<span class="hl-str">"view"</span>, product_id=99).pack()
+
+<span class="hl-dec">@dp.message(ProductCB.filter(F.action == "view"))</span>
+<span class="hl-kw">async def</span> on_view_product(event, callback_data: ProductCB):
+    print(<span class="hl-str">f"شناسه محصول: {callback_data.product_id}"</span>)</code></pre>
+        </div>
+
+        <h3 id="client-manager" class="sub-heading">۴. مدیریت و اجرای همزمان چنداکانت (ClientManager)</h3>
+        <p>راه‌اندازی ده‌ها اکانت یا ربات همزمان در یک رویداد واحد پایتون:</p>
+
+        <div class="code-container">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+            <span>multi_bot.py</span>
+            <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+          </div>
+          <pre><code><span class="hl-kw">from</span> aiobale <span class="hl-kw">import</span> ClientManager, Dispatcher
+
+dp = Dispatcher()
+manager = ClientManager(dp)
+
+manager.add_client(session_file=<span class="hl-str">"account1"</span>, phone_number=<span class="hl-str">"09121111111"</span>)
+manager.add_client(session_file=<span class="hl-str">"account2"</span>, token=<span class="hl-str">"JWT_TOKEN_..."</span>)
+
+<span class="hl-kw">if</span> __name__ == <span class="hl-str">"__main__"</span>:
+    manager.run_all()</code></pre>
         </div>
       </section>
 

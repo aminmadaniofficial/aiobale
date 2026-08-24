@@ -326,6 +326,7 @@ class Client:
         user_agent: Optional[str] = None,
         show_update_errors: bool = False,
         token: Optional[str] = None,
+        phone_number: Optional[Union[str, int]] = None,
     ):
         if session is None:
             session = AiohttpSession(
@@ -365,6 +366,7 @@ class Client:
         else:
             raise TypeError("session_file must be str, Path, bytes or None")
 
+        self.phone_number: Optional[Union[str, int]] = phone_number
         self.__token = token
         self._me = None
 
@@ -515,8 +517,13 @@ class Client:
             await self._cleanup_session()
 
     async def start(
-        self, run_in_background: bool = False, signal_handling: bool = True
+        self,
+        run_in_background: bool = False,
+        signal_handling: bool = True,
+        phone_number: Optional[Union[str, int]] = None,
     ):
+        if phone_number is not None:
+            self.phone_number = phone_number
         """
         Starts the client session and begins listening for events.
         Args:
