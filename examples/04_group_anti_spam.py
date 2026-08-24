@@ -12,7 +12,7 @@ LINK_REGEX = re.compile(r"(https?://|ble\.ir/|t\.me/|eitaa\.com/|rubika\.ir/)")
 ADMINS = [2091967932]  # شناسه ادمین‌های ربات
 
 dp = Dispatcher()
-client = Client(dp, session_file="admin_bot.bale")
+client = Client(dp, session_file="session.bale")
 
 # ۱. حذف خودکار لینک‌های تبلیغاتی در گروه‌ها
 @dp.message(F.chat.type == ChatType.GROUP)

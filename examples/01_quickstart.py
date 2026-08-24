@@ -37,7 +37,7 @@ async def echo_message(msg: Message):
 
 async def main():
     # اگر شماره تلفن را پاس دهید، فقط کد پیامک شده در کنسول پرسیده می‌شود
-    client = Client(dp, session_file="bot_session.bale")
+    client = Client(dp, session_file="session.bale")
     print("🚀 Bot is running...")
     await client.start()
 

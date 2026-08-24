@@ -8,7 +8,7 @@ from aiobale.filters import IsGift, IsPrivate
 from aiobale.types import Message
 
 dp = Dispatcher()
-client = Client(dp, session_file="gift_bot.bale")
+client = Client(dp, session_file="session.bale")
 
 
 @dp.message(IsGift(), IsPrivate())

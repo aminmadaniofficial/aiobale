@@ -5,7 +5,7 @@ from aiobale.types import Message
 from aiobale.filters import IsText
 
 dp = Dispatcher()
-client = Client(dp)
+client = Client(dp, session_file="session.bale")
 
 
 def get_link(text: str) -> Optional[dict]:

@@ -5,7 +5,7 @@ from aiobale.types import Message, FileInput
 
 dp = Dispatcher()
 # If you have already logged in, don't use `new`
-client = Client(dp, session_file="new")
+client = Client(dp, session_file="session.bale")
 
 
 def make_thumbnail(image_path: str) -> bytes:

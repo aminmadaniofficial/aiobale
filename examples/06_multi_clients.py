@@ -21,13 +21,13 @@ def main():
 
     # افزودن اکانت اول با سشن محلی و شماره
     manager.add_client(
-        session_file="support_account.bale",
+        session_file="session.bale",
         phone_number="09121111111"
     )
 
     # افزودن اکانت دوم با توکن مستقیم
     manager.add_client(
-        session_file="bot_account.bale",
+        session_file="session.bale",
         token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
     )
 

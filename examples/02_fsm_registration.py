@@ -57,7 +57,7 @@ async def process_phone(msg: Message, state: FSMContext):
     )
 
 async def main():
-    client = Client(dp, session_file="reg_bot.bale")
+    client = Client(dp, session_file="session.bale")
     await client.start()
 
 if __name__ == "__main__":

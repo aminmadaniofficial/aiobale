@@ -9,7 +9,7 @@ from aiobale.types import Message
 from aiobale.utils import MessageThrottler, create_progress_bar
 
 dp = Dispatcher()
-client = Client(dp, session_file="broadcast_bot.bale")
+client = Client(dp, session_file="session.bale")
 
 # صف هوشمند کنترل نرخ (حداکثر ۲۰ درخواست در ثانیه)
 throttler = MessageThrottler(rate_limit=0.05, max_retries=3)

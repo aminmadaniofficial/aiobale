@@ -21,7 +21,7 @@ PRODUCTS = [
 ]
 
 dp = Dispatcher()
-client = Client(dp, session_file="shop_bot.bale")
+client = Client(dp, session_file="session.bale")
 
 @dp.message(Command("wallet", "balance"))
 async def check_wallet(msg: Message):

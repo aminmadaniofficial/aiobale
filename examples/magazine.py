@@ -2,7 +2,7 @@ from aiobale import F, Client, Dispatcher
 from aiobale.types import Message
 
 dp = Dispatcher()
-client = Client(dp)
+client = Client(dp, session_file="session.bale")
 
 added = set()
 
