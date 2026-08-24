@@ -194,3 +194,9 @@ cython_debug/
 .cursorindexingignoredist/
 build/
 *.egg-info/
+
+# Local test playground and credentials
+local_test_bot/
+test_playground/
+*.bale
+*.db
