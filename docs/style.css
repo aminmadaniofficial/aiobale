@@ -691,7 +691,8 @@ table.doc-table tr:hover td {
   padding-top: 15vh;
 }
 
-.modal-backdrop.open {
+.modal-backdrop.open,
+.modal-backdrop.active {
   display: flex;
 }
 

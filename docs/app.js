@@ -1,4 +1,4 @@
-﻿// Aiobale Documentation App Engine
+// Aiobale Documentation App Engine
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   initSidebar();
@@ -56,20 +56,20 @@ function updateThemeIcon(theme) {
 
 // 2. Mobile Responsive Sidebar Drawer
 function initSidebar() {
-  const mobileToggle = document.getElementById('mobile-menu-toggle');
+  const mobileToggle = document.getElementById('mobile-menu-toggle') || document.getElementById('menu-toggle');
   const sidebar = document.getElementById('sidebar');
   const backdrop = document.getElementById('sidebar-backdrop');
   const navLinks = document.querySelectorAll('.sidebar-link');
 
   function openSidebar() {
     sidebar.classList.add('mobile-open');
-    backdrop.classList.add('active');
+    if (backdrop) backdrop.classList.add('active');
     document.body.style.overflow = 'hidden';
   }
 
   function closeSidebar() {
     sidebar.classList.remove('mobile-open');
-    backdrop.classList.remove('active');
+    if (backdrop) backdrop.classList.remove('active');
     document.body.style.overflow = '';
   }
 
@@ -105,46 +105,51 @@ function initSidebar() {
 
 // 3. Search Engine (Modal & Live Search)
 function initSearch() {
-  const searchInput = document.getElementById('doc-search');
+  const searchBtn = document.getElementById('search-btn') || document.getElementById('doc-search');
   const searchModal = document.getElementById('search-modal');
-  const modalInput = document.getElementById('modal-search-input');
+  const modalInput = document.getElementById('search-input') || document.getElementById('modal-search-input');
   const resultsContainer = document.getElementById('search-results');
-  const searchKbd = document.querySelector('.search-kbd');
 
   const index = [];
+
+  // Index sections, sub-headings, and methods
   document.querySelectorAll('.doc-section').forEach((section) => {
     const titleEl = section.querySelector('.section-title');
     const title = titleEl ? titleEl.innerText.trim() : '';
     const sectionId = section.getAttribute('id');
-    const descEl = section.querySelector('.section-desc');
+    const descEl = section.querySelector('.section-subtitle') || section.querySelector('.section-desc');
     const desc = descEl ? descEl.innerText.trim() : '';
 
-    index.push({
-      id: sectionId,
-      title: title,
-      desc: desc,
-      type: 'بخش اصلی',
-    });
+    if (title && sectionId) {
+      index.push({
+        id: sectionId,
+        title: title,
+        desc: desc || 'بخش اصلی',
+        type: 'بخش',
+      });
+    }
 
-    section.querySelectorAll('h3, h4').forEach((heading) => {
-      if (heading.innerText.trim()) {
+    section.querySelectorAll('h3.sub-heading, h3.sub-title, h4').forEach((heading) => {
+      const hText = heading.innerText.trim();
+      const hId = heading.id || sectionId;
+      if (hText) {
         index.push({
-          id: heading.id || sectionId,
-          title: heading.innerText.trim(),
-          desc: `در بخش ${title}`,
+          id: hId,
+          title: hText,
+          desc: `در ${title}`,
           type: 'موضوع',
         });
       }
     });
 
-    section.querySelectorAll('.method-item').forEach((item) => {
-      const code = item.querySelector('.method-code');
-      const itemDesc = item.querySelector('.method-desc');
-      if (code) {
+    section.querySelectorAll('tr[id]').forEach((row) => {
+      const codeEl = row.querySelector('td code');
+      const descCell = row.querySelectorAll('td')[2];
+      if (codeEl) {
         index.push({
-          id: item.id || sectionId,
-          title: code.innerText.trim(),
-          desc: itemDesc ? itemDesc.innerText.trim() : `متد در ${title}`,
+          id: row.id,
+          title: codeEl.innerText.trim(),
+          desc: descCell ? descCell.innerText.trim() : `متد در ${title}`,
           type: 'متد API',
         });
       }
@@ -153,40 +158,38 @@ function initSearch() {
 
   function openSearchModal() {
     if (!searchModal) return;
-    searchModal.classList.add('active');
+    searchModal.classList.add('open', 'active');
     if (modalInput) {
-      modalInput.value = searchInput ? searchInput.value : '';
-      modalInput.focus();
-      renderResults(modalInput.value);
+      modalInput.value = '';
+      setTimeout(() => modalInput.focus(), 60);
+      renderResults('');
     }
     document.body.style.overflow = 'hidden';
   }
 
   function closeSearchModal() {
     if (!searchModal) return;
-    searchModal.classList.remove('active');
+    searchModal.classList.remove('open', 'active');
     document.body.style.overflow = '';
   }
 
-  if (searchInput) {
-    searchInput.addEventListener('focus', openSearchModal);
-    searchInput.addEventListener('click', openSearchModal);
-  }
-
-  if (searchKbd) {
-    searchKbd.addEventListener('click', openSearchModal);
+  if (searchBtn) {
+    searchBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openSearchModal();
+    });
   }
 
   document.addEventListener('keydown', (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
       e.preventDefault();
-      if (searchModal && searchModal.classList.contains('active')) {
+      if (searchModal && (searchModal.classList.contains('open') || searchModal.classList.contains('active'))) {
         closeSearchModal();
       } else {
         openSearchModal();
       }
     }
-    if (e.key === 'Escape' && searchModal && searchModal.classList.contains('active')) {
+    if (e.key === 'Escape' && searchModal && (searchModal.classList.contains('open') || searchModal.classList.contains('active'))) {
       closeSearchModal();
     }
   });
@@ -211,8 +214,8 @@ function initSearch() {
 
     if (!cleanQuery) {
       resultsContainer.innerHTML = `
-        <div class="search-empty">
-          <p>یک کلمه کلیدی، نام کلاس یا متد را برای جستجو وارد کنید...</p>
+        <div style="text-align: center; padding: 28px 16px; color: var(--text-muted); font-size: 0.9rem;">
+          عبارت مورد نظر را برای جستجو در متدها، فیلترها و مستندات تایپ کنید...
         </div>
       `;
       return;
@@ -227,8 +230,8 @@ function initSearch() {
 
     if (matched.length === 0) {
       resultsContainer.innerHTML = `
-        <div class="search-empty">
-          <p>نتیجه‌ای برای «<strong>${escapeHtml(cleanQuery)}</strong>» یافت نشد.</p>
+        <div style="text-align: center; padding: 28px 16px; color: var(--text-muted); font-size: 0.9rem;">
+          نتیجه‌ای برای «<strong>${escapeHtml(cleanQuery)}</strong>» یافت نشد.
         </div>
       `;
       return;
@@ -238,18 +241,20 @@ function initSearch() {
       .slice(0, 10)
       .map((item) => {
         return `
-        <a href="#${item.id}" class="search-result-item" onclick="document.getElementById('search-modal').classList.remove('active'); document.body.style.overflow='';">
-          <div class="result-badge">${escapeHtml(item.type)}</div>
-          <div class="result-info">
-            <div class="result-title">${highlightText(item.title, cleanQuery)}</div>
-            <div class="result-desc">${highlightText(item.desc, cleanQuery)}</div>
-          </div>
-          <div class="result-arrow">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="m15 18-6-6 6-6"/>
-            </svg>
-          </div>
-        </a>
+        <li>
+          <a href="#${item.id}" class="search-result-item" onclick="document.getElementById('search-modal').classList.remove('open', 'active'); document.body.style.overflow='';">
+            <div>
+              <span style="display: inline-block; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px; background: var(--bg-tertiary); color: var(--text-muted); margin-bottom: 4px;">${escapeHtml(item.type)}</span>
+              <div style="font-weight: 600; font-size: 0.95rem; color: var(--text-primary);">${highlightText(item.title, cleanQuery)}</div>
+              <div style="font-size: 0.82rem; color: var(--text-muted);">${highlightText(item.desc, cleanQuery)}</div>
+            </div>
+            <div style="color: var(--text-muted);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m15 18-6-6 6-6"/>
+              </svg>
+            </div>
+          </a>
+        </li>
       `;
       })
       .join('');
@@ -258,7 +263,7 @@ function initSearch() {
   function highlightText(text, query) {
     if (!query) return escapeHtml(text);
     const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
-    return escapeHtml(text).replace(regex, '<mark>$1</mark>');
+    return escapeHtml(text).replace(regex, '<mark style="background: rgba(37,99,235,0.25); color: var(--text-link); border-radius: 2px; padding: 0 2px;">$1</mark>');
   }
 
   function escapeHtml(str) {
