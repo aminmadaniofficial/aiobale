@@ -112,7 +112,7 @@ function initSearch() {
 
   const index = [];
 
-  // Index sections, sub-headings, and methods
+  // Index sections
   document.querySelectorAll('.doc-section').forEach((section) => {
     const titleEl = section.querySelector('.section-title');
     const title = titleEl ? titleEl.innerText.trim() : '';
@@ -124,11 +124,13 @@ function initSearch() {
       index.push({
         id: sectionId,
         title: title,
-        desc: desc || 'بخش اصلی',
-        type: 'بخش',
+        desc: desc || 'بخش اصلی مستندات',
+        type: 'بخش اصلی',
+        keywords: `${title} ${desc} ${sectionId}`,
       });
     }
 
+    // Index subheadings
     section.querySelectorAll('h3.sub-heading, h3.sub-title, h4').forEach((heading) => {
       const hText = heading.innerText.trim();
       const hId = heading.id || sectionId;
@@ -138,19 +140,26 @@ function initSearch() {
           title: hText,
           desc: `در ${title}`,
           type: 'موضوع',
+          keywords: `${hText} ${title} ${hId}`,
         });
       }
     });
 
-    section.querySelectorAll('tr[id]').forEach((row) => {
-      const codeEl = row.querySelector('td code');
-      const descCell = row.querySelectorAll('td')[2];
-      if (codeEl) {
+    // Index ALL table rows in API tables
+    section.querySelectorAll('.api-table tbody tr').forEach((row) => {
+      const cells = row.querySelectorAll('td');
+      if (cells.length >= 3) {
+        const methodCode = cells[0].querySelector('code') ? cells[0].querySelector('code').innerText.trim() : cells[0].innerText.trim();
+        const params = cells[1].innerText.trim();
+        const desc = cells[2].innerText.trim();
+        const rowId = row.id || sectionId;
+
         index.push({
-          id: row.id,
-          title: codeEl.innerText.trim(),
-          desc: descCell ? descCell.innerText.trim() : `متد در ${title}`,
+          id: rowId,
+          title: methodCode,
+          desc: `${desc} (پارامترها: ${params || 'ندارد'})`,
           type: 'متد API',
+          keywords: `${methodCode} ${params} ${desc} ${title} کیف پول wallet kifpool کارت حساب هدیه عیدی gift`,
         });
       }
     });
@@ -215,16 +224,18 @@ function initSearch() {
     if (!cleanQuery) {
       resultsContainer.innerHTML = `
         <div style="text-align: center; padding: 28px 16px; color: var(--text-muted); font-size: 0.9rem;">
-          عبارت مورد نظر را برای جستجو در متدها، فیلترها و مستندات تایپ کنید...
+          عبارت مورد نظر (مانند get_wallet، کیف پول، send_message، FSM، دکمه، فیلتر) را جستجو کنید...
         </div>
       `;
       return;
     }
 
     const matched = index.filter((item) => {
+      const q = cleanQuery;
       return (
-        item.title.toLowerCase().includes(cleanQuery) ||
-        item.desc.toLowerCase().includes(cleanQuery)
+        item.title.toLowerCase().includes(q) ||
+        item.desc.toLowerCase().includes(q) ||
+        (item.keywords && item.keywords.toLowerCase().includes(q))
       );
     });
 
@@ -238,7 +249,7 @@ function initSearch() {
     }
 
     resultsContainer.innerHTML = matched
-      .slice(0, 10)
+      .slice(0, 15)
       .map((item) => {
         return `
         <li>

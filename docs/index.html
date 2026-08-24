@@ -159,6 +159,8 @@
           <li><a href="#api-presence" class="sidebar-link"><span class="sidebar-link-content">وضعیت و تایپینگ</span><span class="sidebar-badge">3</span></a></li>
           <li><a href="#api-abacus" class="sidebar-link"><span class="sidebar-link-content">واکنش‌ها و آمار</span><span class="sidebar-badge">5</span></a></li>
           <li><a href="#api-files" class="sidebar-link"><span class="sidebar-link-content">دانلود و آپلود فایل</span><span class="sidebar-badge">4</span></a></li>
+          <li><a href="#api-wallet" class="sidebar-link"><span class="sidebar-link-content">کیف‌پول و بسته‌های مالی (Wallet)</span><span class="sidebar-badge">4</span></a></li>
+          <li><a href="#api-magazine" class="sidebar-link"><span class="sidebar-link-content">مجلات و آپ‌ووت (Magazine)</span><span class="sidebar-badge">4</span></a></li>
         </ul>
       </div>
 
@@ -1226,6 +1228,128 @@ sent = <span class="hl-kw">await</span> client.send_message(
                 <td><code>file_id</code>, <code>access_hash</code></td>
                 <td><code>bytes</code></td>
                 <td>دانلود مستقیم و باینری تمام انواع اسناد، تصاویر و ویدیوها</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- API WALLET & GIFT PACKETS -->
+      <section id="api-wallet" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg>
+            کیف‌پول، حساب بانکی و بسته‌های هدیه (Wallet & Kifpool API)
+          </h2>
+          <p class="section-subtitle">استعلام موجودی کیف‌پول، شماره حساب و کارت، ارسال بسته هدیه (عیدی) و باز کردن پاکت پول</p>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="api-table">
+            <thead>
+              <tr>
+                <th>متد</th>
+                <th>پارامترها</th>
+                <th>توضیحات و کاربرد</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr id="method-get-wallet">
+                <td><code>get_wallet()</code></td>
+                <td>-</td>
+                <td>دریافت موجودی ریالی، شماره حساب، شماره کارت (PAN) و توکن کیف‌پول کاربر</td>
+              </tr>
+              <tr id="method-send-gift">
+                <td><code>send_gift()</code></td>
+                <td><code>chat_id</code>, <code>chat_type</code>, <code>amount</code>, <code>message</code>, <code>gift_count</code>, <code>giving_type</code></td>
+                <td>ارسال بسته هدیه مالی / عیدی به چت خصوصی، گروه یا کانال با تعیین سهمیه و نحوه تقسیم</td>
+              </tr>
+              <tr id="method-open-gift">
+                <td><code>open_gift()</code></td>
+                <td><code>message</code>, <code>token</code></td>
+                <td>باز کردن بسته هدیه ارسالی در چت و دریافت سهم ریالی به کیف‌پول</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="sub-heading">مثال: استعلام موجودی کیف‌پول و ارسال بسته هدیه</h3>
+        <div class="code-container">
+          <div class="code-header">
+            <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+            <span>wallet_example.py</span>
+            <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
+          </div>
+          <pre><code><span class="hl-kw">from</span> aiobale <span class="hl-kw">import</span> Client, Dispatcher, F
+<span class="hl-kw">from</span> aiobale.enums <span class="hl-kw">import</span> ChatType, GivingType
+
+dp = Dispatcher()
+client = Client(dp, session_file=<span class="hl-str">"wallet_bot"</span>)
+
+<span class="hl-dec">@dp.message(F.text == "/balance")</span>
+<span class="hl-kw">async def</span> check_balance(msg):
+    wallet_resp = <span class="hl-kw">await</span> client.get_wallet()
+    wallet = wallet_resp.wallet
+    <span class="hl-kw">await</span> msg.reply(
+        <span class="hl-str">f"💰 موجودی کیف‌پول شما: {wallet.balance:,} ریال\n"</span>
+        <span class="hl-str">f"💳 شماره کارت متصل: {wallet.pan or 'نامشخص'}\n"</span>
+        <span class="hl-str">f"🏦 شماره حساب: {wallet.account or 'نامشخص'}"</span>
+    )
+
+<span class="hl-dec">@dp.message(F.text == "/send_gift")</span>
+<span class="hl-kw">async def</span> send_gift_pack(msg):
+    <span class="hl-com"># ارسال عیدی ۱۰,۰۰۰ تومانی بین ۵ نفر به صورت تصادفی/شانسی</span>
+    <span class="hl-kw">await</span> client.send_gift(
+        chat_id=msg.chat.id,
+        chat_type=msg.chat.type,
+        amount=100000,
+        message=<span class="hl-str">"عیدی اعضای گروه 🎁"</span>,
+        gift_count=5,
+        giving_type=GivingType.RANDOM
+    )
+    <span class="hl-kw">await</span> msg.reply(<span class="hl-str">"بسته هدیه با موفقیت ارسال شد!"</span>)</code></pre>
+        </div>
+      </section>
+
+      <!-- API MAGAZINE & UPVOTES -->
+      <section id="api-magazine" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
+            مجلات، پست‌ها و آپ‌ووت (Magazine & Upvotes API)
+          </h2>
+          <p class="section-subtitle">لایک/آپ‌ووت پست‌های عمومی، لغو رأی، دریافت لیست رأی‌دهندگان و ارسال گزارش تخلف</p>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="api-table">
+            <thead>
+              <tr>
+                <th>متد</th>
+                <th>پارامترها</th>
+                <th>توضیحات و کاربرد</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr id="method-upvote">
+                <td><code>upvote_post()</code></td>
+                <td><code>chat_id</code>, <code>message_id</code></td>
+                <td>ثبت رأی مثبت / آپ‌ووت برای پست‌های بخش مجله و کانال‌ها</td>
+              </tr>
+              <tr id="method-revoke-upvote">
+                <td><code>revoke_upvoted_post()</code></td>
+                <td><code>chat_id</code>, <code>message_id</code></td>
+                <td>لغو رأی قبلی ثبت‌شده روی یک پست</td>
+              </tr>
+              <tr id="method-get-upvoters">
+                <td><code>get_message_upvoters()</code></td>
+                <td><code>chat_id</code>, <code>message_id</code></td>
+                <td>دریافت لیست و مشخصات کاربرانی که به پست رأی داده‌اند</td>
+              </tr>
+              <tr id="method-send-report">
+                <td><code>send_report()</code></td>
+                <td><code>chat_id</code>, <code>report_reason</code></td>
+                <td>ارسال گزارش تخلف یا اسپم برای یک چت یا پیام به پشتیبانی</td>
               </tr>
             </tbody>
           </table>
