@@ -1,3 +1,4 @@
+from __future__ import annotations
 from collections import defaultdict
 from typing import (
     Any,
@@ -8,21 +9,17 @@ from typing import (
     List,
     Optional,
     Union,
-    Type,
 )
 
 from .event.handler import Handler, FilterObject, CallbackType
 from .event.observer import EventObserver
+from ..fsm.state import State
+from ..fsm.filter import StateFilter
 
 
 class Router:
     """
-    A class for managing and dispatching event handlers based on event types.
-    The `Router` class provides a mechanism to register, organize, and execute
-    handlers for various event types. It allows developers to define custom
-    event types and associate them with specific callback functions. This is
-    particularly useful in event-driven architectures where different parts of
-    the system need to respond to specific events.
+    Router for organizing and registering event handlers.
     """
 
     def __init__(self, name: Optional[str] = None) -> None:
@@ -65,7 +62,7 @@ class Router:
     def _make_event_decorator(
         self, event_type: str
     ) -> Callable[..., Callable[..., Coroutine[Any, Any, Any]]]:
-        def decorator(*filters: Callable[..., Union[bool, Awaitable[bool]]]):
+        def decorator(*filters: Any):
             return self.register(event_type, *filters)
 
         return decorator
@@ -76,13 +73,20 @@ class Router:
     def register(
         self,
         event_type: str,
-        *filters: CallbackType,
+        *filters: Any,
     ) -> Callable[[CallbackType], CallbackType]:
+        normalized_filters: List[Any] = []
+        for f in filters:
+            if isinstance(f, State):
+                normalized_filters.append(StateFilter(f))
+            else:
+                normalized_filters.append(f)
+
         def decorator(func: CallbackType) -> CallbackType:
             handler = Handler(
                 event_type=event_type,
                 callback=func,
-                filters=[FilterObject(filter_) for filter_ in filters],
+                filters=[FilterObject(filter_) for filter_ in normalized_filters],
             )
             self._handlers[event_type].append(handler)
             return func

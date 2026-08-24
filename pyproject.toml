@@ -1,9 +1,9 @@
 [project]
 name = "aiobale"
-version = "0.1.6"
-description = "Modern async client for Bale."
+version = "0.2.0"
+description = "Modern, fast, fully asynchronous Python framework for Bale Messenger."
 authors = [
-    { name = "Amin Madani", email = "aminmadani@example.com" }
+    { name = "Amin Madani", email = "aminmadani112@gmail.com" }
 ]
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -21,7 +21,7 @@ dependencies = [
 [project.urls]
 "Homepage" = "https://github.com/aminmadaniofficial/aiobale"
 "Repository" = "https://github.com/aminmadaniofficial/aiobale"
-"Documentation" = "https://github.com/aminmadaniofficial/aiobale"
+"Documentation" = "https://aminmadaniofficial.github.io/aiobale/"
 
 [build-system]
 requires = ["setuptools>=61.0"]
