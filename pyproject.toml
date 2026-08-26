@@ -1,6 +1,6 @@
 [project]
 name = "aiobale-py"
-version = "0.3.2"
+version = "0.3.4"
 description = "Modern, fast, fully asynchronous Python framework for Bale Messenger."
 authors = [
     { name = "Amin Madani", email = "aminmadani112@gmail.com" }
