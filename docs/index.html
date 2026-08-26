@@ -149,6 +149,8 @@
           <li><a href="#message-throttler" class="sidebar-link"><span class="sidebar-link-content">کنترل ریت‌لیمیت (Throttler)</span></a></li>
           <li><a href="#progress-bar" class="sidebar-link"><span class="sidebar-link-content">نوار پیشرفت دانلود/آپلود</span></a></li>
           <li><a href="#webhook-server" class="sidebar-link"><span class="sidebar-link-content">سرویس وب‌هوک (Webhook)</span></a></li>
+          <li><a href="#conversation-wizard" class="sidebar-link"><span class="sidebar-link-content">مکالمه خطی (Conversation)</span></a></li>
+          <li><a href="#iter-messages" class="sidebar-link"><span class="sidebar-link-content">پیمایش تاریخچه (iter_messages)</span></a></li>
         </ul>
       </div>
 
@@ -192,6 +194,7 @@
           <li><a href="#example-downloader" class="sidebar-link"><span class="sidebar-link-content">۳. ربات دانلودر مدیا</span></a></li>
           <li><a href="#example-broadcast" class="sidebar-link"><span class="sidebar-link-content">۴. ربات برودکست کانال</span></a></li>
           <li><a href="#example-routers" class="sidebar-link"><span class="sidebar-link-content">۵. ربات ماژولار چندروتر</span></a></li>
+          <li><a href="#examples-showcase" class="sidebar-link"><span class="sidebar-link-content">فهرست ۶ اگزمپل جامع پروژه</span></a></li>
         </ul>
       </div>
 
@@ -286,10 +289,10 @@
             <button class="copy-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span class="copy-text">کپی</span></button>
           </div>
           <pre><code><span class="hl-com"># نصب مستقیم از سورس یا پکیج</span>
-pip install aiobale
+pip install aiobale-py
 
 <span class="hl-com"># یا نصب با ابزار سریع uv</span>
-uv pip install aiobale</code></pre>
+uv pip install aiobale-py</code></pre>
         </div>
 
         <div class="alert-card alert-info">
@@ -665,6 +668,23 @@ client = Client(dp, session_file=<span class="hl-str">"bot"</span>)</code></pre>
                 <td><code>IsGift()</code></td>
                 <td>پیام‌های بسته هدیه / عیدی بله</td>
               </tr>
+                <tr>
+                  <td><code>IsMedia()</code></td>
+                  <td>بررسی می‌کند که آیا پیام حاوی هرگونه رسانه (تصویر، داکیومنت، وویس، ویدیو، صوت یا گیف) است یا خیر.</td>
+                </tr>
+                <tr>
+                  <td><code>TextEquals("hello", ignore_case=True)</code></td>
+                  <td>تطابق دقیق متن پیام با یکی از عبارات تعیین‌شده (با امکان نادیده‌گرفتن بزرگی/کوچکی حروف).</td>
+                </tr>
+                <tr>
+                  <td><code>TextContains("keyword", ignore_case=True)</code></td>
+                  <td>بررسی وجود یک زیررشته خاص در متن پیام ارسالی کاربر.</td>
+                </tr>
+                <tr>
+                  <td><code>TextStartsWith("!")</code> / <code>TextEndsWith("?")</code></td>
+                  <td>بررسی شروع شدن یا خاتمه یافتن متن پیام با پیشوند یا پسوند خاص.</td>
+                </tr>
+
               <tr>
                 <td><code>IsPrivate()</code></td>
                 <td>پیام‌های دریافتی از چت‌های دونفره (پیوی)</td>
@@ -1030,7 +1050,129 @@ webhook = AiohttpWebhookServer(
       </section>
 
       <!-- API MESSAGING -->
-      <section id="api-messaging" class="doc-section">
+      
+        <!-- CONVERSATION WIZARD -->
+        <section id="conversation-wizard" class="doc-section">
+          <div class="section-header">
+            <h2 class="section-title">مکالمه خطی و تعاملی (Conversation Wizard)</h2>
+            <p class="section-subtitle">طراحی فرم‌ها و گفت‌وگوهای چندمرحله‌ای به صورت مستقیم با استفاده از Async Context Manager بدون نیاز به تعریف دستی ماشین‌های وضعیت پیچیده.</p>
+          </div>
+
+          <div class="code-container">
+            <div class="code-header">
+              <div class="code-dots">
+                <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+              </div>
+              <span class="code-title">نمونه فرم ثبت‌نام با Conversation</span>
+              <button class="copy-btn"><span class="copy-text">کپی</span></button>
+            </div>
+            <pre><code><span class="hl-kw">from</span> aiobale <span class="hl-kw">import</span> Client, Dispatcher, F, Conversation
+<span class="hl-kw">from</span> aiobale.types <span class="hl-kw">import</span> Message
+
+dp = Dispatcher()
+client = Client(dp, session_file=<span class="hl-str">"my_bot"</span>)
+
+<span class="hl-dec">@dp.message(F.text == "/start")</span>
+<span class="hl-kw">async def</span> <span class="hl-fn">start_wizard</span>(msg: Message, client: Client):
+    <span class="hl-com"># شروع یک مکالمه ایزوله برای این چت</span>
+    <span class="hl-kw">async with</span> client.conversation(msg.chat.id, timeout=<span class="hl-num">120</span>) <span class="hl-kw">as</span> conv:
+        <span class="hl-kw">await</span> conv.send_message(<span class="hl-str">"سلام! لطفاً نام و نام خانوادگی خود را وارد کنید:"</span>)
+        
+        <span class="hl-com"># انتظار برای دریافت پاسخ بعدی از کاربر</span>
+        name_msg = <span class="hl-kw">await</span> conv.get_response(timeout=<span class="hl-num">60</span>)
+        
+        <span class="hl-kw">await</span> conv.send_message(<span class="hl-str">f"خوش آمدی {name_msg.text}! حالا سن خود را وارد کن:"</span>)
+        age_msg = <span class="hl-kw">await</span> conv.get_response(timeout=<span class="hl-num">60</span>)
+        
+        <span class="hl-kw">await</span> conv.send_message(
+            <span class="hl-str">f"ثبت‌نام شما تکمیل شد! ✅\nنام: {name_msg.text}\nسن: {age_msg.text}"</span>
+        )
+
+<span class="hl-kw">if</span> __name__ == <span class="hl-str">"__main__"</span>:
+    client.run()</code></pre>
+          </div>
+
+          <div class="table-container" style="margin-top: 24px;">
+            <table class="api-table">
+              <thead>
+                <tr>
+                  <th>متد / ویژگی</th>
+                  <th>پارامترها</th>
+                  <th>توضیحات</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>conv.get_response()</code></td>
+                  <td><code>timeout: Optional[float] = None</code></td>
+                  <td>منتظر پیام بعدی از سمت این چت می‌ماند و شیء <code>Message</code> را بازمی‌گرداند.</td>
+                </tr>
+                <tr>
+                  <td><code>conv.send_message()</code></td>
+                  <td><code>text, reply_markup=None</code></td>
+                  <td>پیام متنی جدیدی در قالب این مکالمه ارسال می‌کند.</td>
+                </tr>
+                <tr>
+                  <td><code>conv.send_photo()</code></td>
+                  <td><code>photo, caption=None</code></td>
+                  <td>تصویر (مسیر فایل، بایت یا BytesIO) را به کاربر ارسال می‌کند.</td>
+                </tr>
+                <tr>
+                  <td><code>conv.send_document()</code></td>
+                  <td><code>file, caption=None</code></td>
+                  <td>فایل یا سندی را در مکالمه ارسال می‌کند.</td>
+                </tr>
+                <tr>
+                  <td><code>conv.close()</code></td>
+                  <td>-</td>
+                  <td>مکالمه را لغو کرده و صف پیام‌ها را آزاد می‌کند.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ITER MESSAGES -->
+        <section id="iter-messages" class="doc-section">
+          <div class="section-header">
+            <h2 class="section-title">پیمایش تاریخچه پیام‌ها (iter_messages)</h2>
+            <p class="section-subtitle">خواندن صفحه‌بندی‌شده و روان تاریخچه پیام‌های یک چت، گروه یا کانال به صورت <code>AsyncGenerator</code> با مدیریت خودکار تکرارها و حافظه پکت‌ها.</p>
+          </div>
+
+          <div class="code-container">
+            <div class="code-header">
+              <div class="code-dots">
+                <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+              </div>
+              <span class="code-title">نمونه بکاپ‌گیری و خواندن تاریخچه چت</span>
+              <button class="copy-btn"><span class="copy-text">کپی</span></button>
+            </div>
+            <pre><code><span class="hl-kw">from</span> aiobale <span class="hl-kw">import</span> Client
+<span class="hl-kw">from</span> aiobale.enums <span class="hl-kw">import</span> ChatType
+
+client = Client(session_file=<span class="hl-str">"backup_session"</span>)
+
+<span class="hl-kw">async def</span> <span class="hl-fn">read_chat_history</span>(target_chat_id: int):
+    print(<span class="hl-str">"در حال خواندن ۱۰۰ پیام اخیر چت..."</span>)
+    
+    <span class="hl-kw">async for</span> msg <span class="hl-kw">in</span> client.iter_messages(
+        chat_id=target_chat_id,
+        chat_type=ChatType.PRIVATE,
+        limit=<span class="hl-num">100</span>,
+        chunk_size=<span class="hl-num">20</span>
+    ):
+        <span class="hl-kw">if</span> msg.text:
+            print(<span class="hl-str">f"[{msg.date}] کاربر {msg.sender_id}: {msg.text}"</span>)
+        <span class="hl-kw">elif</span> msg.document:
+            print(<span class="hl-str">f"[{msg.date}] فایل پیوست: {msg.document.name} (حجم: {msg.document.size} بایت)"</span>)
+
+<span class="hl-kw">if</span> __name__ == <span class="hl-str">"__main__"</span>:
+    <span class="hl-kw">import</span> asyncio
+    asyncio.run(read_chat_history(<span class="hl-num">123456789</span>))</code></pre>
+          </div>
+        </section>
+
+        <section id="api-messaging" class="doc-section">
         <div class="section-header">
           <h2 class="section-title">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
@@ -1063,7 +1205,7 @@ webhook = AiohttpWebhookServer(
                 <td>ارسال تصویر یا فایل از مسیر دیسک یا باینری</td>
               </tr>
               <tr id="method-send-audio-video">
-                <td><code>send_voice / send_video</code></td>
+                <td><code>send_voice / send_video / send_audio</code></td>
                 <td><span class="badge badge-async">async</span></td>
                 <td><code>chat_id</code>, <code>file</code>, <code>duration</code>, <code>caption</code></td>
                 <td>ارسال ویس یا ویدیوی پلیر با پیش‌نمایش</td>
@@ -1702,7 +1844,60 @@ client = Client(dp, session_file=<span class="hl-str">"modular_bot"</span>)
       </section>
 
       <!-- TROUBLESHOOTING -->
-      <section id="troubleshooting" class="doc-section">
+      
+        <!-- EXAMPLES SHOWCASE -->
+        <section id="examples-showcase" class="doc-section">
+          <div class="section-header">
+            <h2 class="section-title">فهرست پروژه‌ها و نمونه‌های آماده (Examples Showcase)</h2>
+            <p class="section-subtitle">در پوشه <code>examples/</code> مخزن، ۶ اسکریپت آماده، استاندارد و خودآموز برای سناریوهای مختلف قرار دارد که می‌توانید مستقیماً اجرا کنید.</p>
+          </div>
+
+          <div class="table-container">
+            <table class="api-table">
+              <thead>
+                <tr>
+                  <th>فایل نمونه</th>
+                  <th>موضوع و عملکرد</th>
+                  <th>قابلیت‌های پوشش داده شده</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>01_auth_and_echo.py</code></td>
+                  <td>ربات اکو و ورود تعاملی با CLI</td>
+                  <td>احراز هویت پیامکی، ساخت سشن، هندلرهای پایه پیام، متد <code>reply()</code></td>
+                </tr>
+                <tr>
+                  <td><code>02_fsm_registration.py</code></td>
+                  <td>فرم ثبت‌نام چندمرحله‌ای با دیتابیس ماندگار</td>
+                  <td><code>StatesGroup</code>، <code>State</code>، <code>FSMContext</code> و <code>SQLiteStorage</code></td>
+                </tr>
+                <tr>
+                  <td><code>03_shop_and_wallet.py</code></td>
+                  <td>کاتالوگ محصولات، کیبورد فروشگاهی و کیف پول بله</td>
+                  <td><code>ReplyKeyboardMarkup</code>، <code>CallbackData</code>، <code>send_gift()</code></td>
+                </tr>
+                <tr>
+                  <td><code>04_webhook_and_server.py</code></td>
+                  <td>راه‌اندازی ربات با معماری وب‌هوک</td>
+                  <td><code>AiohttpWebhookServer</code>، امنیت با <code>secret_token</code>، هندل لایو</td>
+                </tr>
+                <tr>
+                  <td><code>05_rate_limiting_and_middleware.py</code></td>
+                  <td>کنترل نرخ ارسال و میدلور ضداسپم</td>
+                  <td><code>MessageThrottler</code>، زنجیره میدلورهای Pre/Post</td>
+                </tr>
+                <tr>
+                  <td><code>06_pagination_and_keyboards.py</code></td>
+                  <td>کیبوردهای شیشه‌ای داینامیک و صفحه‌بندی محصولات</td>
+                  <td><code>KeyboardPaginator</code>، دکمه‌های ناوبری قبلی/بعدی</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="troubleshooting" class="doc-section">
         <div class="section-header">
           <h2 class="section-title">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
