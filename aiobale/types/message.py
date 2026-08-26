@@ -170,7 +170,11 @@ class Message(BaleObject):
         text: str,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
         message_id: Optional[int] = None,
-    ) -> Message:
+        auto_split: bool = False,
+        max_split_length: int = 4000,
+        as_file_if_too_long: bool = False,
+        file_name: str = "message.txt",
+    ) -> Union[Message, List[Message]]:
         """
         Send a new message in the same chat.
         """
@@ -180,6 +184,10 @@ class Message(BaleObject):
             chat_type=self.chat.type,
             message_id=message_id,
             reply_markup=reply_markup,
+            auto_split=auto_split,
+            max_split_length=max_split_length,
+            as_file_if_too_long=as_file_if_too_long,
+            file_name=file_name,
         )
 
     async def reply(
@@ -187,7 +195,11 @@ class Message(BaleObject):
         text: str,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
         message_id: Optional[int] = None,
-    ) -> Message:
+        auto_split: bool = False,
+        max_split_length: int = 4000,
+        as_file_if_too_long: bool = False,
+        file_name: str = "message.txt",
+    ) -> Union[Message, List[Message]]:
         """
         Send a reply to this message.
         """
@@ -198,6 +210,10 @@ class Message(BaleObject):
             reply_to=self,
             message_id=message_id,
             reply_markup=reply_markup,
+            auto_split=auto_split,
+            max_split_length=max_split_length,
+            as_file_if_too_long=as_file_if_too_long,
+            file_name=file_name,
         )
 
     async def answer_document(

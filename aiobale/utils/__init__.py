@@ -1,3 +1,4 @@
+from .text import smart_split_text
 from .jwt_checker import parse_jwt
 from .random import generate_id
 from .protobuf import ProtoBuf
@@ -19,6 +20,7 @@ from .throttler import MessageThrottler, BroadcastResult
 from .progress import create_progress_bar, format_bytes
 
 __all__ = (
+    "smart_split_text",
     "parse_jwt",
     "generate_id",
     "ProtoBuf",

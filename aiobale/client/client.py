@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ..utils.text import smart_split_text
 
 import asyncio
 from dataclasses import dataclass, field
@@ -978,7 +979,11 @@ class Client:
         reply_markup: Optional[InlineKeyboardMarkup] = None,
         reply_to: Optional[Union[Message, InfoMessage]] = None,
         message_id: Optional[int] = None,
-    ) -> Message:
+        auto_split: bool = False,
+        max_split_length: int = 4000,
+        as_file_if_too_long: bool = False,
+        file_name: str = "message.txt",
+    ) -> Union[Message, List[Message]]:
         """
         Sends a text message to a specified chat.
 
@@ -996,6 +1001,40 @@ class Client:
             BaleError: If the server returns an error during sending.
             AiobaleError: For client-side errors.
         """
+        # Option 1: Send as document file if too long
+        if as_file_if_too_long and len(text) > max_split_length:
+            file_bytes = io.BytesIO(text.encode("utf-8"))
+            file_bytes.name = file_name
+            return await self.send_document(
+                file=file_bytes,
+                chat_id=chat_id,
+                chat_type=chat_type,
+                caption=f"📄 {file_name} ({len(text)} characters)",
+                reply_to=reply_to,
+                reply_markup=reply_markup,
+            )
+
+        # Option 2: Split automatically into multiple sequential messages
+        if auto_split and len(text) > max_split_length:
+            chunks = smart_split_text(text, max_length=max_split_length)
+            sent_messages: List[Message] = []
+            for i, chunk in enumerate(chunks):
+                chunk_reply = reply_to if i == 0 else None
+                chunk_markup = reply_markup if i == len(chunks) - 1 else None
+                msg = await self.send_message(
+                    text=chunk,
+                    chat_id=chat_id,
+                    chat_type=chat_type,
+                    reply_markup=chunk_markup,
+                    reply_to=chunk_reply,
+                    auto_split=False,
+                )
+                if isinstance(msg, list):
+                    sent_messages.extend(msg)
+                else:
+                    sent_messages.append(msg)
+            return sent_messages
+
         chat = self._build_chat(chat_id, chat_type)
         peer = self._resolve_peer(chat)
 

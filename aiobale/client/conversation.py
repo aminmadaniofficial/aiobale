@@ -69,13 +69,21 @@ class Conversation:
         text: str,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
         message_id: Optional[int] = None,
-    ) -> Message:
+        auto_split: bool = False,
+        max_split_length: int = 4000,
+        as_file_if_too_long: bool = False,
+        file_name: str = "message.txt",
+    ) -> Union[Message, List[Message]]:
         return await self.client.send_message(
             text=text,
             chat_id=self.chat_id,
             chat_type=self.chat_type,
             reply_markup=reply_markup,
             message_id=message_id,
+            auto_split=auto_split,
+            max_split_length=max_split_length,
+            as_file_if_too_long=as_file_if_too_long,
+            file_name=file_name,
         )
 
     async def send_photo(
