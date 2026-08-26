@@ -22,9 +22,9 @@
 
 ---
 
-> [!NOTE]
-> ### 💖 Special Thanks
-> Special thanks to **Mohammad Reza Taghdiri (محمدرضا تقدیری)** for his invaluable assistance in testing, finding edge-case bugs, and continuous contributions to improving library stability.
+## 💖 Special Thanks
+
+Special thanks to **Mohammad Reza Taghdiri (محمدرضا تقدیری)** for his invaluable assistance in testing, discovering edge-case bugs, and contributing to the library's development and stability.
 
 ---
 
