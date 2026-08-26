@@ -88,3 +88,35 @@ def test_full_group_single_member_dict_normalization():
     assert len(resp.fullgroup.members) == 1
     assert resp.fullgroup.members[0].id == 681691196
     assert resp.fullgroup.available_reactions == ["👍"]
+
+
+def test_member_with_string_title_in_field_3():
+    from aiobale.types.responses import FullGroupResponse
+
+    raw_payload = {
+        "1": {
+            "1": 987654,
+            "3": "My Group",
+            "10": 5,
+            "17": [
+                {"1": 101, "2": 1, "3": 1700000000, "4": 1},
+                {"1": 681691196, "2": 890, "3": "تبلیغات آزاد طلایی", "4": 0},
+            ],
+        }
+    }
+
+    resp = FullGroupResponse.model_validate(raw_payload)
+    assert resp.fullgroup is not None
+    assert len(resp.fullgroup.members) == 2
+    
+    admin_mem = resp.fullgroup.members[0]
+    assert admin_mem.id == 101
+    assert admin_mem.date == 1700000000
+    assert admin_mem.is_admin is True
+
+    special_mem = resp.fullgroup.members[1]
+    assert special_mem.id == 681691196
+    assert special_mem.date is None
+    assert special_mem.title == "تبلیغات آزاد طلایی"
+    assert special_mem.name == "تبلیغات آزاد طلایی"
+    assert special_mem.is_admin is False
