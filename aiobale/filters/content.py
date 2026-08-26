@@ -71,3 +71,13 @@ class IsGift(Filter):
             return False
 
         return event.gift is not None
+
+
+class IsMedia(Filter):
+    """
+    Filter to check if the message contains any media (photo, document, audio, video, voice, gif).
+    """
+    async def __call__(self, event: Any) -> bool:
+        if not isinstance(event, Message):
+            return False
+        return event.document is not None

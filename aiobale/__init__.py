@@ -11,6 +11,7 @@ warnings.filterwarnings(
 __version__ = "0.3.2"
 
 from .client.client import Client
+from .client.conversation import Conversation
 from .client.manager import ClientManager
 from .dispatcher.dispatcher import Dispatcher
 from .dispatcher.router import Router
@@ -45,6 +46,7 @@ F = MagicFilter()
 __all__ = (
     "__version__",
     "Client",
+    "Conversation",
     "ClientManager",
     "Dispatcher",
     "Router",

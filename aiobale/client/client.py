@@ -639,6 +639,93 @@ class Client:
 
         return False
 
+    def _register_conversation(self, conversation: Any) -> None:
+        self._conversations[conversation.chat_id] = conversation
+
+    def _unregister_conversation(self, conversation: Any) -> None:
+        if self._conversations.get(conversation.chat_id) is conversation:
+            self._conversations.pop(conversation.chat_id, None)
+
+    def conversation(
+        self,
+        chat_id: int,
+        chat_type: ChatType = ChatType.PRIVATE,
+        timeout: Optional[float] = None,
+    ):
+        from .conversation import Conversation
+        return Conversation(self, chat_id=chat_id, chat_type=chat_type, timeout=timeout)
+
+    async def iter_messages(
+        self,
+        chat_id: int,
+        chat_type: Optional[ChatType] = None,
+        limit: Optional[int] = None,
+        offset_date: int = -1,
+        chunk_size: int = 50,
+        load_mode: ListLoadMode = ListLoadMode.BACKWARD,
+    ) -> AsyncGenerator[Message, None]:
+        """
+        Asynchronously iterates over the message history of a chat.
+
+        Args:
+            chat_id (int): Target chat ID.
+            chat_type (Optional[ChatType]): Chat type (defaults to ChatType.PRIVATE).
+            limit (Optional[int]): Maximum total messages to yield. If None, yields until end.
+            offset_date (int): Starting date offset. Defaults to -1 (latest).
+            chunk_size (int): Number of messages loaded per API request. Defaults to 50.
+            load_mode (ListLoadMode): History load direction (BACKWARD or FORWARD).
+
+        Yields:
+            Message: Message instances from history.
+        """
+        if chat_type is None:
+            chat_type = ChatType.PRIVATE
+
+        yielded = 0
+        current_offset = offset_date
+        seen_ids = set()
+
+        while True:
+            fetch_count = chunk_size if limit is None else min(chunk_size, limit - yielded)
+            if fetch_count <= 0:
+                break
+
+            messages = await self.load_history(
+                chat_id=chat_id,
+                chat_type=chat_type,
+                limit=fetch_count,
+                offset_date=current_offset,
+                load_mode=load_mode,
+            )
+
+            if not messages:
+                break
+
+            new_in_batch = 0
+            for msg in messages:
+                if msg.message_id in seen_ids:
+                    continue
+                seen_ids.add(msg.message_id)
+                new_in_batch += 1
+                yield msg
+                yielded += 1
+                if limit is not None and yielded >= limit:
+                    return
+
+            if new_in_batch == 0:
+                break
+
+            if load_mode == ListLoadMode.BACKWARD:
+                oldest_date = min(m.date for m in messages if m.date)
+                if oldest_date == current_offset:
+                    break
+                current_offset = oldest_date
+            else:
+                newest_date = max(m.date for m in messages if m.date)
+                if newest_date == current_offset:
+                    break
+                current_offset = newest_date
+
     async def handle_update(self, update: UpdateBody) -> None:
         """
         Handle a single incoming update event from the Bale API.
@@ -664,6 +751,11 @@ class Client:
 
         if self._should_ignore(event_type, event):
             return
+
+        if event_type == "message" and hasattr(event, "chat") and getattr(event.chat, "id", None) in self._conversations:
+            conv = self._conversations[event.chat.id]
+            if not conv.is_closed():
+                conv.put_message(event)
 
         if self.dispatcher is not None:
             await self.dispatcher.dispatch(event_type, event, client=self)
