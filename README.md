@@ -22,11 +22,6 @@
 
 ---
 
-## 💖 Special Thanks
-
-Special thanks to **Mohammad Reza Taghdiri (محمدرضا تقدیری)** for his invaluable assistance in testing, discovering edge-case bugs, and contributing to the library's development and stability.
-
----
 
 ## ✨ Key Features
 
@@ -206,11 +201,11 @@ The repository includes a modern, web-based interactive documentation website wi
 
 ---
 
-## 🏛️ Project Origin & Acknowledgements
+## 👥 Acknowledgements & Special Thanks
 
-- **Core Foundation:** Built upon the foundational work of the original `aiobale` library created by **Alireza Jahani** ([Enalite LD](https://github.com/Enalite)).
-- **Testing & Bug Reports:** Special thanks to **Mohammad Reza Taghdiri (محمدرضا تقدیری)** for testing, discovering edge cases, and helping improve codebase stability.
 - **Maintainer & Lead Developer:** Modernized, heavily refactored, debugged, and actively maintained by **[Amin Madani](https://github.com/aminmadaniofficial)**.
+- **Core Foundation:** Built upon the foundational work of the original `aiobale` library created by **Alireza Jahani** ([Enalite LD](https://github.com/Enalite)).
+- **Special Thanks (Testing & QA):** Huge thanks to **Mohammad Reza Taghdiri (محمدرضا تقدیری)** for active participation in testing, discovering critical edge-case bugs, and contributing to library stability.
 
 ---
 
