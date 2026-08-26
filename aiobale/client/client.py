@@ -3163,7 +3163,7 @@ class Client:
 
     async def _send_file_message(
         self,
-        file: Union[FileDetails, DocumentMessage, FileInput],
+        file: Union[FileDetails, DocumentMessage, FileInput, str, pathlib.Path, bytes, io.IOBase],
         chat_id: int,
         chat_type: ChatType,
         caption: Optional[str] = None,
@@ -3175,6 +3175,9 @@ class Client:
         ext: Optional[DocumentsExt] = None,
         use_own_content: bool = False,
     ) -> Message:
+        if isinstance(file, (str, pathlib.Path, bytes, io.IOBase)):
+            file = FileInput(file)
+
         if isinstance(file, FileInput):
             file_info = await self.upload_file(
                 file=file, chat_id=chat_id, chat_type=chat_type, send_type=send_type
@@ -3231,7 +3234,7 @@ class Client:
 
     async def send_document(
         self,
-        file: Union[FileDetails, DocumentMessage, FileInput],
+        file: Union[FileDetails, DocumentMessage, FileInput, str, pathlib.Path, bytes, io.IOBase],
         chat_id: int,
         chat_type: ChatType,
         caption: Optional[str] = None,
@@ -3284,7 +3287,7 @@ class Client:
 
     async def send_photo(
         self,
-        photo: Union[FileDetails, DocumentMessage, FileInput],
+        photo: Union[FileDetails, DocumentMessage, FileInput, str, pathlib.Path, bytes, io.IOBase],
         chat_id: int,
         chat_type: ChatType,
         caption: Optional[str] = None,
@@ -3339,7 +3342,7 @@ class Client:
 
     async def send_video(
         self,
-        video: Union[FileDetails, DocumentMessage, FileInput],
+        video: Union[FileDetails, DocumentMessage, FileInput, str, pathlib.Path, bytes, io.IOBase],
         chat_id: int,
         chat_type: ChatType,
         caption: Optional[str] = None,
@@ -3398,7 +3401,7 @@ class Client:
 
     async def send_voice(
         self,
-        voice: Union[FileDetails, DocumentMessage, FileInput],
+        voice: Union[FileDetails, DocumentMessage, FileInput, str, pathlib.Path, bytes, io.IOBase],
         chat_id: int,
         chat_type: ChatType,
         caption: Optional[str] = None,
@@ -3440,7 +3443,7 @@ class Client:
 
     async def send_audio(
         self,
-        audio: Union[FileDetails, DocumentMessage, FileInput],
+        audio: Union[FileDetails, DocumentMessage, FileInput, str, pathlib.Path, bytes, io.IOBase],
         chat_id: int,
         chat_type: ChatType,
         caption: Optional[str] = None,
@@ -3490,7 +3493,7 @@ class Client:
 
     async def send_gif(
         self,
-        gif: Union[FileDetails, DocumentMessage, FileInput],
+        gif: Union[FileDetails, DocumentMessage, FileInput, str, pathlib.Path, bytes, io.IOBase],
         chat_id: int,
         chat_type: ChatType,
         caption: Optional[str] = None,
