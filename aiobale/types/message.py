@@ -190,6 +190,128 @@ class Message(BaleObject):
             file_name=file_name,
         )
 
+
+    @property
+    def has_inline_keyboard(self) -> bool:
+        """Returns True if the message contains an inline keyboard from a bot."""
+        return bool(
+            self.content
+            and self.content.bot_message
+            and self.content.bot_message.inline_keyboard_markup
+            and self.content.bot_message.inline_keyboard_markup.inline_keyboard
+        )
+
+    @property
+    def inline_keyboard(self) -> Optional[InlineKeyboardMarkup]:
+        """Returns the InlineKeyboardMarkup attached to this message, if any."""
+        if self.has_inline_keyboard:
+            return self.content.bot_message.inline_keyboard_markup
+        return None
+
+    @property
+    def buttons(self) -> List[InlineKeyboardButton]:
+        """Returns a flat list of all InlineKeyboardButton objects in the message."""
+        if not self.has_inline_keyboard:
+            return []
+        markup = self.inline_keyboard
+        if not markup:
+            return []
+        flat_buttons: List[InlineKeyboardButton] = []
+        for row in markup.inline_keyboard:
+            flat_buttons.extend(row)
+        return flat_buttons
+
+    @property
+    def button_matrix(self) -> List[List[InlineKeyboardButton]]:
+        """Returns the 2D grid (rows) of InlineKeyboardButton objects in the message."""
+        if not self.has_inline_keyboard:
+            return []
+        markup = self.inline_keyboard
+        return markup.inline_keyboard if markup else []
+
+    @property
+    def button_texts(self) -> List[str]:
+        """Returns a list of all button labels (text) in this message."""
+        return [b.text for b in self.buttons if b.text]
+
+    @property
+    def button_urls(self) -> List[str]:
+        """Returns a list of all non-empty URLs from buttons in this message."""
+        return [b.url for b in self.buttons if b.url]
+
+    @property
+    def button_callbacks(self) -> List[str]:
+        """Returns a list of all non-empty callback_data strings from buttons in this message."""
+        return [b.callback_data for b in self.buttons if b.callback_data]
+
+    def find_button(
+        self,
+        text: Optional[str] = None,
+        callback_data: Optional[str] = None,
+        url: Optional[str] = None,
+        exact: bool = False,
+    ) -> Optional[InlineKeyboardButton]:
+        """
+        Finds the first InlineKeyboardButton matching the given criteria.
+
+        Args:
+            text (Optional[str]): Button text or substring to match.
+            callback_data (Optional[str]): Callback data or substring to match.
+            url (Optional[str]): URL or substring to match.
+            exact (bool): If True, matches exact string; if False, checks substring (case-insensitive).
+
+        Returns:
+            Optional[InlineKeyboardButton]: The matched button or None.
+        """
+        for btn in self.buttons:
+            if text is not None:
+                if exact and btn.text != text:
+                    continue
+                if not exact and (not btn.text or text.lower() not in btn.text.lower()):
+                    continue
+            if callback_data is not None:
+                if exact and btn.callback_data != callback_data:
+                    continue
+                if not exact and (not btn.callback_data or callback_data.lower() not in (btn.callback_data or "").lower()):
+                    continue
+            if url is not None:
+                if exact and btn.url != url:
+                    continue
+                if not exact and (not btn.url or url.lower() not in (btn.url or "").lower()):
+                    continue
+            return btn
+        return None
+
+    def find_buttons(
+        self,
+        text: Optional[str] = None,
+        callback_data: Optional[str] = None,
+        url: Optional[str] = None,
+        exact: bool = False,
+    ) -> List[InlineKeyboardButton]:
+        """
+        Finds all InlineKeyboardButton objects matching the given criteria.
+        """
+        matched: List[InlineKeyboardButton] = []
+        for btn in self.buttons:
+            if text is not None:
+                if exact and btn.text != text:
+                    continue
+                if not exact and (not btn.text or text.lower() not in btn.text.lower()):
+                    continue
+            if callback_data is not None:
+                if exact and btn.callback_data != callback_data:
+                    continue
+                if not exact and (not btn.callback_data or callback_data.lower() not in (btn.callback_data or "").lower()):
+                    continue
+            if url is not None:
+                if exact and btn.url != url:
+                    continue
+                if not exact and (not btn.url or url.lower() not in (btn.url or "").lower()):
+                    continue
+            matched.append(btn)
+        return matched
+
     async def reply(
         self,
         text: str,

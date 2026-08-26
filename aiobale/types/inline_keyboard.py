@@ -40,6 +40,31 @@ class InlineKeyboardButton(BaleObject):
                 **__pydantic_kwargs,
             )
 
+    
+    @property
+    def is_url(self) -> bool:
+        """Returns True if this button contains a web URL."""
+        return bool(self.url)
+
+    @property
+    def is_callback(self) -> bool:
+        """Returns True if this button contains callback data."""
+        return bool(self.callback_data)
+
+    @property
+    def is_copy(self) -> bool:
+        """Returns True if this button copies text to clipboard."""
+        return bool(self.copy_text)
+
+    def as_dict(self) -> Dict[str, Any]:
+        """Returns button attributes as a clean dictionary."""
+        return {
+            "text": self.text,
+            "url": self.url,
+            "callback_data": self.callback_data,
+            "copy_text": self.copy_text,
+        }
+
     @model_validator(mode="before")
     @classmethod
     def validate_keyboard(cls, data: Any) -> Any:
