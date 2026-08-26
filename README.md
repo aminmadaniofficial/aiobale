@@ -22,6 +22,12 @@
 
 ---
 
+> [!NOTE]
+> ### 💖 Special Thanks
+> Special thanks to **Mohammad Reza Taghdiri (محمدرضا تقدیری)** for his invaluable assistance in testing, finding edge-case bugs, and continuous contributions to improving library stability.
+
+---
+
 ## ✨ Key Features
 
 - **⚡ Fully Asynchronous:** Built natively on Python `asyncio` for non-blocking I/O and high concurrency.
@@ -202,9 +208,9 @@ The repository includes a modern, web-based interactive documentation website wi
 
 ## 🏛️ Project Origin & Acknowledgements
 
-This project is built upon the foundational work of the original `aiobale` library created by **Alireza Jahani** ([Enalite LD](https://github.com/Enalite)). 
-
-It has been modernized, heavily refactored, debugged, and is now actively maintained with automated CI/CD and comprehensive docs by **[Amin Madani](https://github.com/aminmadaniofficial)**.
+- **Core Foundation:** Built upon the foundational work of the original `aiobale` library created by **Alireza Jahani** ([Enalite LD](https://github.com/Enalite)).
+- **Testing & Bug Reports:** Special thanks to **Mohammad Reza Taghdiri (محمدرضا تقدیری)** for testing, discovering edge cases, and helping improve codebase stability.
+- **Maintainer & Lead Developer:** Modernized, heavily refactored, debugged, and actively maintained by **[Amin Madani](https://github.com/aminmadaniofficial)**.
 
 ---
 
