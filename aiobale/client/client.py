@@ -348,6 +348,7 @@ class Client:
         self._tasks = set()
         self._stopped = False
         self._ignored_messages = IgnoredUpdates(event_type="message")
+        self._conversations: Dict[int, Any] = {}
 
         if session_file is None:
             self.__session_file = None
@@ -640,11 +641,14 @@ class Client:
         return False
 
     def _register_conversation(self, conversation: Any) -> None:
+        if not hasattr(self, "_conversations") or self._conversations is None:
+            self._conversations = {}
         self._conversations[conversation.chat_id] = conversation
 
     def _unregister_conversation(self, conversation: Any) -> None:
-        if self._conversations.get(conversation.chat_id) is conversation:
-            self._conversations.pop(conversation.chat_id, None)
+        if hasattr(self, "_conversations") and self._conversations is not None:
+            if self._conversations.get(conversation.chat_id) is conversation:
+                self._conversations.pop(conversation.chat_id, None)
 
     def conversation(
         self,
@@ -752,8 +756,14 @@ class Client:
         if self._should_ignore(event_type, event):
             return
 
-        if event_type == "message" and hasattr(event, "chat") and getattr(event.chat, "id", None) in self._conversations:
-            conv = self._conversations[event.chat.id]
+        conversations = getattr(self, "_conversations", None)
+        if (
+            conversations
+            and event_type == "message"
+            and hasattr(event, "chat")
+            and getattr(event.chat, "id", None) in conversations
+        ):
+            conv = conversations[event.chat.id]
             if not conv.is_closed():
                 conv.put_message(event)
 

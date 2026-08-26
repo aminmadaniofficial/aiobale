@@ -1,3 +1,4 @@
+import pytest
 from aiobale.types import (
     Update,
     UpdateBody,
@@ -43,3 +44,33 @@ def test_update_current_event_message_edited():
     assert isinstance(event_val, Message)
     assert event_val.text == "edited text"
     assert event_val.message_id == 100
+
+
+@pytest.mark.asyncio
+async def test_handle_update_with_real_client_instance():
+    from aiobale import Client, Dispatcher
+    from aiobale.types import UpdateBody, Update, Message
+
+    dp = Dispatcher()
+    client = Client(dp, token="dummy_token")
+    
+    assert hasattr(client, "_conversations")
+    assert isinstance(client._conversations, dict)
+
+    raw_msg_update = {
+        "1": {
+            "55": {
+                "1": {"1": 1, "2": 12345},
+                "2": 999,
+                "3": 1700000000,
+                "4": 1,
+                "5": {"text": {"1": "Test Hello"}},
+            }
+        },
+        "4": 1700000000,
+    }
+
+    update_body = UpdateBody.model_validate(raw_msg_update)
+    
+    # Should execute smoothly without any AttributeError
+    await client.handle_update(update_body)
