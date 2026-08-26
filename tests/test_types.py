@@ -66,3 +66,25 @@ def test_enum_aliases():
 
     # GiftOpening alias
     assert GiftOpening is GiftOpenning
+
+
+def test_full_group_single_member_dict_normalization():
+    from aiobale.types.responses import FullGroupResponse
+
+    raw_payload = {
+        "1": {
+            "1": 987654,
+            "3": "My Group",
+            "10": 1,
+            "17": {"1": 681691196, "2": 890123, "4": 1},
+            "24": "👍",
+        }
+    }
+
+    resp = FullGroupResponse.model_validate(raw_payload)
+    assert resp.fullgroup is not None
+    assert resp.fullgroup.title == "My Group"
+    assert isinstance(resp.fullgroup.members, list)
+    assert len(resp.fullgroup.members) == 1
+    assert resp.fullgroup.members[0].id == 681691196
+    assert resp.fullgroup.available_reactions == ["👍"]

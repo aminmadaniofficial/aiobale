@@ -84,25 +84,46 @@ class FullGroup(BaleObject):
 
         - Fields with structure like {"1": value} are unwrapped to value.
         - Empty fields (None, empty dicts) are removed from the payload.
-        - Field "4" is converted to a list if it's a single item.
+        - Field "17" (members) is converted to a list if it's a single item/dict.
+        - Field "24" (available_reactions) is converted to a list if it's a single item.
         - Skips normalization for known structured fields: ex_info (18), permissions (13,14).
         """
+        if not isinstance(data, dict):
+            return data
+
+        fixed = {}
         for key in list(data.keys()):
             value = data[key]
 
             if key in ["18", "13", "14"]:
+                fixed[key] = value
                 continue
 
             elif isinstance(value, dict) and len(value) == 1 and "1" in value:
-                data[key] = value["1"]
+                val = value["1"]
+                if key in ["17", "members"] and not isinstance(val, list):
+                    fixed[key] = [val] if val else []
+                elif key in ["24", "available_reactions"] and not isinstance(val, list):
+                    fixed[key] = [val] if val else []
+                else:
+                    fixed[key] = val
 
-            elif not value:
-                data.pop(key)
+            elif key in ["17", "members"] and not isinstance(value, list):
+                fixed[key] = [value] if value else []
 
-            elif key == "4" and not isinstance(data[key], list):
-                data[key] = [data[key]]
+            elif key in ["24", "available_reactions"] and not isinstance(value, list):
+                fixed[key] = [value] if value else []
 
-        return data
+            elif not value and value != 0 and value is not False:
+                continue
+
+            elif key == "4" and not isinstance(value, list):
+                fixed[key] = [value]
+
+            else:
+                fixed[key] = value
+
+        return fixed
 
     if TYPE_CHECKING:
         # This init is only used for type checking and IDE autocomplete.

@@ -1065,6 +1065,26 @@ class Client:
         result: MessageResponse = await self(call)
         return result.message
 
+    def _normalize_peer_id(self, peer: Any) -> int:
+        if isinstance(peer, int):
+            return peer
+        if hasattr(peer, "id") and peer.id is not None:
+            return int(peer.id)
+        if isinstance(peer, str) and peer.isdigit():
+            return int(peer)
+        raise TypeError(f"Cannot resolve peer id from {type(peer).__name__}: {peer}")
+
+    def _normalize_users_list(self, users: Any) -> List[int]:
+        if users is None:
+            return []
+        if isinstance(users, (int, str)) and not isinstance(users, (list, tuple, set)):
+            return [self._normalize_peer_id(users)]
+        if hasattr(users, "id") and not isinstance(users, (list, tuple, set)):
+            return [self._normalize_peer_id(users)]
+        if isinstance(users, (list, tuple, set)):
+            return [self._normalize_peer_id(u) for u in users]
+        raise TypeError(f"Invalid users argument: {type(users).__name__} ({users})")
+
     def _resolve_peer_type(self, chat_type: ChatType) -> PeerType:
         """
         Resolves the PeerType based on the given ChatType.
@@ -2527,7 +2547,8 @@ class Client:
             AiobaleError: For client-side errors.
         """
         random_id = generate_id()
-        users = [ShortPeer(id=v) for v in users]
+        normalized_users = self._normalize_users_list(users) if users else []
+        users = [ShortPeer(id=v) for v in normalized_users]
         restriction = Restriction.PUBLIC if username else Restriction.PRIVATE
 
         call = CreateGroup(
@@ -2565,13 +2586,17 @@ class Client:
             title=title, username=username, users=users, group_type=GroupType.CHANNEL
         )
 
-    async def invite_users(self, users: Tuple[int], chat_id: int) -> InviteResponse:
+    async def invite_users(
+        self,
+        chat_id: Union[int, Chat, Peer, ShortPeer, List[Any], Tuple[Any, ...]],
+        users: Optional[Union[int, User, Peer, ShortPeer, List[Any], Tuple[Any, ...], Set[Any]]] = None,
+    ) -> InviteResponse:
         """
-        Invites users to a group or channel.
+        Invites one or more users to a group or channel.
 
         Args:
-            users (Tuple[int]): User IDs to invite.
-            chat_id (int): The group or channel ID to invite users to.
+            chat_id (Union[int, Chat, Peer, ShortPeer]): The target group or channel ID.
+            users (Union[int, User, List[int], Tuple[int]]): User ID(s) or User object(s) to invite.
 
         Returns:
             aiobale.types.responses.InviteResponse: The result of the invite operation.
@@ -2579,15 +2604,34 @@ class Client:
         Raises:
             BaleError: If the server returns an error.
             AiobaleError: For client-side errors.
-
-        This method allows you to invite multiple users to a group or channel. The `users` argument should be a tuple of user IDs. For more information about invitation limits and restrictions, check our website.
         """
+        if users is None:
+            raise ValueError("Both chat_id and users must be provided to invite_users().")
+
+        # Flexible argument resolution: handle both (chat_id, users) and legacy (users, chat_id)
+        if isinstance(chat_id, (list, tuple, set)) and (isinstance(users, int) or hasattr(users, "id")):
+            target_chat_id = self._normalize_peer_id(users)
+            target_users = self._normalize_users_list(chat_id)
+        else:
+            target_chat_id = self._normalize_peer_id(chat_id)
+            target_users = self._normalize_users_list(users)
+
         call = InviteUsers(
-            group=ShortPeer(id=chat_id),
+            group=ShortPeer(id=target_chat_id),
             random_id=generate_id(12),
-            users=[ShortPeer(id=u) for u in users],
+            users=[ShortPeer(id=u) for u in target_users],
         )
         return await self(call)
+
+    async def invite_user(
+        self,
+        chat_id: Union[int, Chat, Peer, ShortPeer],
+        user: Union[int, User, Peer, ShortPeer],
+    ) -> InviteResponse:
+        """
+        Convenience alias to invite a single user to a group or channel.
+        """
+        return await self.invite_users(chat_id=chat_id, users=user)
 
     async def edit_group_title(self, title: str, chat_id: int) -> DefaultResponse:
         """
