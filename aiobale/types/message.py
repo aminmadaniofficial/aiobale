@@ -1,7 +1,9 @@
 from __future__ import annotations
+import io
 
 from pydantic import Field, model_validator
-from typing import TYPE_CHECKING, List, Optional, Union
+import pathlib
+from typing import BinaryIO, TYPE_CHECKING, List, Optional, Union
 
 from ..enums import ChatType, ListLoadMode, ReportKind, TypingMode
 from .chat import Chat
@@ -137,6 +139,32 @@ class Message(BaleObject):
 
         return self
 
+    async def download(
+        self,
+        destination: Optional[Union[BinaryIO, pathlib.Path, str]] = None,
+        seek: bool = True,
+    ) -> Optional[BinaryIO]:
+        """
+        Downloads the media or document attached to this message.
+
+        Args:
+            destination (Optional[Union[BinaryIO, pathlib.Path, str]]): Destination file path or stream.
+                If None, downloads into an in-memory BytesIO stream.
+            seek (bool): If True, rewinds the returned stream to 0.
+
+        Returns:
+            Optional[BinaryIO]: BytesIO object if destination was None or a stream, else None.
+        """
+        if not self.document:
+            raise ValueError("Message does not contain any downloadable document or media content.")
+
+        return await self.client.download_file(
+            file_id=self.document.file_id,
+            access_hash=self.document.access_hash,
+            destination=destination,
+            seek=seek,
+        )
+
     async def answer(
         self,
         text: str,
@@ -174,7 +202,7 @@ class Message(BaleObject):
 
     async def answer_document(
         self,
-        file: Union[FileDetails, DocumentMessage, FileInput],
+        file: Union[FileDetails, DocumentMessage, FileInput, str, pathlib.Path, bytes, io.IOBase],
         caption: Optional[str] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
         message_id: Optional[int] = None,
@@ -195,7 +223,7 @@ class Message(BaleObject):
 
     async def reply_document(
         self,
-        file: Union[FileDetails, DocumentMessage, FileInput],
+        file: Union[FileDetails, DocumentMessage, FileInput, str, pathlib.Path, bytes, io.IOBase],
         caption: Optional[str] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
         message_id: Optional[int] = None,
@@ -215,7 +243,7 @@ class Message(BaleObject):
 
     async def answer_photo(
         self,
-        photo: Union[FileDetails, DocumentMessage, FileInput],
+        photo: Union[FileDetails, DocumentMessage, FileInput, str, pathlib.Path, bytes, io.IOBase],
         caption: Optional[str] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
         cover_thumb: Optional[FileInput] = None,
@@ -240,7 +268,7 @@ class Message(BaleObject):
 
     async def reply_photo(
         self,
-        photo: Union[FileDetails, DocumentMessage, FileInput],
+        photo: Union[FileDetails, DocumentMessage, FileInput, str, pathlib.Path, bytes, io.IOBase],
         caption: Optional[str] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
         cover_thumb: Optional[FileInput] = None,
@@ -266,7 +294,7 @@ class Message(BaleObject):
 
     async def answer_video(
         self,
-        video: Union[FileDetails, DocumentMessage, FileInput],
+        video: Union[FileDetails, DocumentMessage, FileInput, str, pathlib.Path, bytes, io.IOBase],
         caption: Optional[str] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
         cover_thumb: Optional[FileInput] = None,
@@ -293,7 +321,7 @@ class Message(BaleObject):
 
     async def reply_video(
         self,
-        video: Union[FileDetails, DocumentMessage, FileInput],
+        video: Union[FileDetails, DocumentMessage, FileInput, str, pathlib.Path, bytes, io.IOBase],
         caption: Optional[str] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
         cover_thumb: Optional[FileInput] = None,
@@ -321,7 +349,7 @@ class Message(BaleObject):
 
     async def answer_voice(
         self,
-        voice: Union[FileDetails, DocumentMessage, FileInput],
+        voice: Union[FileDetails, DocumentMessage, FileInput, str, pathlib.Path, bytes, io.IOBase],
         caption: Optional[str] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
         duration: Optional[int] = None,
@@ -342,7 +370,7 @@ class Message(BaleObject):
 
     async def reply_voice(
         self,
-        voice: Union[FileDetails, DocumentMessage, FileInput],
+        voice: Union[FileDetails, DocumentMessage, FileInput, str, pathlib.Path, bytes, io.IOBase],
         caption: Optional[str] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
         duration: Optional[int] = None,
@@ -364,7 +392,7 @@ class Message(BaleObject):
 
     async def answer_audio(
         self,
-        audio: Union[FileDetails, DocumentMessage, FileInput],
+        audio: Union[FileDetails, DocumentMessage, FileInput, str, pathlib.Path, bytes, io.IOBase],
         caption: Optional[str] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
         duration: Optional[int] = None,
@@ -391,7 +419,7 @@ class Message(BaleObject):
 
     async def reply_audio(
         self,
-        audio: Union[FileDetails, DocumentMessage, FileInput],
+        audio: Union[FileDetails, DocumentMessage, FileInput, str, pathlib.Path, bytes, io.IOBase],
         caption: Optional[str] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
         duration: Optional[int] = None,
@@ -419,7 +447,7 @@ class Message(BaleObject):
 
     async def answer_gif(
         self,
-        gif: Union[FileDetails, DocumentMessage, FileInput],
+        gif: Union[FileDetails, DocumentMessage, FileInput, str, pathlib.Path, bytes, io.IOBase],
         caption: Optional[str] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
         cover_thumb: Optional[FileInput] = None,
@@ -446,7 +474,7 @@ class Message(BaleObject):
 
     async def reply_gif(
         self,
-        gif: Union[FileDetails, DocumentMessage, FileInput],
+        gif: Union[FileDetails, DocumentMessage, FileInput, str, pathlib.Path, bytes, io.IOBase],
         caption: Optional[str] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
         cover_thumb: Optional[FileInput] = None,
