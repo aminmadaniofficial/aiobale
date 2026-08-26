@@ -245,7 +245,7 @@ class AiohttpSession(BaseSession):
                 async for chunk in resp.content.iter_chunked(chunk_size):
                     yield chunk
         except Exception as e:
-            raise AiobaleError(f"Upload error: {e}") from e
+            raise AiobaleError(f"Download/Stream error: {e}") from e
         finally:
             if own_session:
                 await session.close()

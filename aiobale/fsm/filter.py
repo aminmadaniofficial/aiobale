@@ -14,10 +14,13 @@ class StateFilter(Filter):
         async def step1_handler(msg: Message, state: FSMContext):
             ...
     """
-    def __init__(self, *states: Optional[Union[State, str, Sequence[Union[State, str]]]]):
+    def __init__(self, *states: Optional[Union[State, str, Sequence[Union[State, str]], type]]):
+        from .state import StatesGroup
         flat_states = []
         for s in states:
-            if isinstance(s, (list, tuple, set)):
+            if isinstance(s, type) and issubclass(s, StatesGroup):
+                flat_states.extend(s.get_states())
+            elif isinstance(s, (list, tuple, set)):
                 flat_states.extend(s)
             else:
                 flat_states.append(s)

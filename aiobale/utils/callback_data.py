@@ -82,10 +82,22 @@ class CallbackData(BaseModel):
         if len(parts) - 1 != len(field_names):
             raise ValueError(f"Expected {len(field_names)} values, got {len(parts) - 1}")
         data = {}
+        import typing
+
         for name, part in zip(field_names, parts[1:]):
             field_info = cls.model_fields[name]
             target_type = field_info.annotation
-            if target_type == int:
+
+            # Handle Optional[...] and Union[..., None]
+            origin = typing.get_origin(target_type)
+            if origin is Union:
+                args = [a for a in typing.get_args(target_type) if a is not type(None)]
+                if args:
+                    target_type = args[0]
+
+            if part == "None" or (part == "" and target_type is not str):
+                data[name] = None
+            elif target_type == int:
                 data[name] = int(part)
             elif target_type == float:
                 data[name] = float(part)

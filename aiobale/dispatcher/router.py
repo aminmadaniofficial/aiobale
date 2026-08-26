@@ -75,9 +75,10 @@ class Router:
         event_type: str,
         *filters: Any,
     ) -> Callable[[CallbackType], CallbackType]:
+        from ..fsm.state import StatesGroup
         normalized_filters: List[Any] = []
         for f in filters:
-            if isinstance(f, State):
+            if isinstance(f, (State, type)) and (isinstance(f, State) or (isinstance(f, type) and issubclass(f, StatesGroup))):
                 normalized_filters.append(StateFilter(f))
             else:
                 normalized_filters.append(f)

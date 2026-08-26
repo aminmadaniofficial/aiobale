@@ -26,8 +26,15 @@ class FSMContext:
     async def get_data(self) -> Dict[str, Any]:
         return await self.storage.get_data(self.chat_id, self.user_id)
 
-    async def update_data(self, **kwargs: Any) -> Dict[str, Any]:
-        return await self.storage.update_data(self.chat_id, self.user_id, kwargs)
+    async def update_data(
+        self, data: Optional[Dict[str, Any]] = None, **kwargs: Any
+    ) -> Dict[str, Any]:
+        merged: Dict[str, Any] = {}
+        if data:
+            merged.update(data)
+        if kwargs:
+            merged.update(kwargs)
+        return await self.storage.update_data(self.chat_id, self.user_id, merged)
 
     async def clear(self) -> None:
         await self.storage.clear(self.chat_id, self.user_id)
