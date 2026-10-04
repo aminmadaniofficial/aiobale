@@ -25,16 +25,16 @@ class MessageData(BaleObject):
     via previous and next message links.
     """
 
-    sender_id: int = Field(..., alias="1")
+    sender_id: int = Field(default=0, alias="1")
     """The unique identifier of the sender (user or bot) who created the message."""
 
-    message_id: int = Field(..., alias="2")
+    message_id: int = Field(default=0, alias="2")
     """The unique identifier of this message within the chat."""
 
-    date: int = Field(..., alias="3")
+    date: int = Field(default=0, alias="3")
     """Timestamp when the message was originally sent, in milliseconds since epoch."""
 
-    content: MessageContent = Field(..., alias="4")
+    content: Optional[MessageContent] = Field(default=None, alias="4")
     """The main content of the message, such as text, media, or service info."""
 
     replied_to: Optional[QuotedMessage] = Field(None, alias="8")
@@ -102,7 +102,7 @@ class MessageData(BaleObject):
             chat=self.chat,
             sender_id=self.sender_id,
             date=self.date,
-            content=self.content,
+            content=self.content or MessageContent(),
             previous_message=self.previous_message,
             quoted_replied_to=self.replied_to,
             replied_to=self.replied_to.message if self.replied_to is not None else None,

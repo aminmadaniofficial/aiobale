@@ -10,7 +10,6 @@ from ...exceptions import AiobaleError, BaleError
 from ...types import FileInput
 from .base import BaseSession
 
-
 DEFAULT_USER_AGENT = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
     "AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -170,7 +169,7 @@ class AiohttpSession(BaseSession):
             return content
 
         result = self.decoder(clean_grpc(content))
-        return method.__returning__.model_validate(result)
+        return self.decode_result(result, method)
 
     async def upload(
         self,

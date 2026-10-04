@@ -1,9 +1,11 @@
 from __future__ import annotations
 import re
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Sequence, Union
+from typing import Any, Dict, List, Optional, Sequence, Union, TYPE_CHECKING
 from .base import Filter
-from ..types import Message
+
+if TYPE_CHECKING:
+    from ..types.message import Message
 
 
 @dataclass
@@ -91,12 +93,10 @@ class Command(Filter):
 
     async def __call__(self, event: Any, **kwargs: Any) -> Union[bool, Dict[str, Any]]:
         text: Optional[str] = None
-        if isinstance(event, Message):
-            text = event.text
-        elif hasattr(event, "text"):
-            text = getattr(event, "text", None)
-        elif isinstance(event, str):
+        if isinstance(event, str):
             text = event
+        else:
+            text = getattr(event, "text", None)
 
         if not text:
             return False

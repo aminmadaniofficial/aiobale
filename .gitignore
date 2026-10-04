@@ -198,5 +198,6 @@ build/
 # Local test playground and credentials
 local_test_bot/
 test_playground/
+sessions/
 *.bale
 *.db

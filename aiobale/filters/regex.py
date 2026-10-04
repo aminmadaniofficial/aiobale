@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import re
-from typing import Pattern, Union, Any
+from typing import Pattern, Union, Any, TYPE_CHECKING
 
 from .base import Filter
-from ..types import Message
+
+if TYPE_CHECKING:
+    from ..types.message import Message
 
 
 class RegexFilter(Filter):
@@ -32,13 +34,13 @@ class RegexFilter(Filter):
         Checks if the given event's text matches the regex pattern.
 
         Args:
-            event (Any): The event to be checked. Expected to be a Message instance.
+            event (Any): The event to be checked. Expected to be a Message instance or object with text.
 
         Returns:
             bool: True if the message text matches the pattern, False otherwise.
         """
-        if not isinstance(event, Message):
+        text = getattr(event, "text", None) if not isinstance(event, str) else event
+        if text is None:
             return False
 
-        text = event.text or ""
         return bool(self.pattern.search(text))

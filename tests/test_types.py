@@ -120,3 +120,39 @@ def test_member_with_string_title_in_field_3():
     assert special_mem.title == "تبلیغات آزاد طلایی"
     assert special_mem.name == "تبلیغات آزاد طلایی"
     assert special_mem.is_admin is False
+
+
+def test_document_message_with_dict_mime_type():
+    from aiobale.types import DocumentMessage
+
+    raw_doc = {
+        "1": 123456,
+        "2": 789012,
+        "4": "test.pdf",
+        "5": {"13": 7453017782211797357},
+    }
+
+    doc = DocumentMessage.model_validate(raw_doc)
+    assert doc.file_id == 123456
+    assert doc.name == "test.pdf"
+    assert isinstance(doc.mime_type, dict)
+    assert doc.mime_type == {"13": 7453017782211797357}
+
+
+def test_message_data_tombstone_defaults():
+    from aiobale.types.message_data import MessageData
+
+    # Bale tombstone payload with missing date and content
+    raw_msg_data = {
+        "1": 2091967932,
+        "2": -85382345123456,
+        "16": {},
+        "19": {},
+    }
+
+    msg_data = MessageData.model_validate(raw_msg_data)
+    assert msg_data.sender_id == 2091967932
+    assert msg_data.message_id == -85382345123456
+    assert msg_data.date == 0
+    assert msg_data.content is None
+

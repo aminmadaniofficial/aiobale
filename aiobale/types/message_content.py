@@ -82,7 +82,7 @@ class DocumentMessage(BaleObject):
     Can be a plain string or a dictionary for localized names.
     """
 
-    mime_type: str = Field(..., alias="5")
+    mime_type: Optional[Union[str, Dict[str, Any]]] = Field(default="", alias="5")
     """MIME type describing the file format."""
 
     thumb: Optional[Thumbnail] = Field(None, alias="6")
@@ -102,7 +102,7 @@ class DocumentMessage(BaleObject):
             access_hash: int,
             size: Optional[int] = None,
             name: Union[Dict, str],
-            mime_type: str,
+            mime_type: Optional[Union[str, Dict[str, Any]]] = "",
             ext: Optional[Dict] = None,
             caption: Optional[MessageCaption] = None,
             thumb: Optional[Thumbnail] = None,

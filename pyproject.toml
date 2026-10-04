@@ -1,6 +1,6 @@
 [project]
 name = "aiobale-py"
-version = "0.3.8"
+version = "0.3.9"
 description = "Modern, fast, fully asynchronous Python framework for Bale Messenger."
 authors = [
     { name = "Amin Madani", email = "aminmadani112@gmail.com" }
@@ -30,3 +30,7 @@ aiobale = "aiobale.cli.main:main"
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["aiobale*"]
+

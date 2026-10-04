@@ -1,83 +1,42 @@
-from typing import Any
+from __future__ import annotations
+from typing import Any, TYPE_CHECKING
 from .base import Filter
-from ..types import Message
+
+if TYPE_CHECKING:
+    from ..types.message import Message
 
 
 class IsText(Filter):
     """
     Filter to check if the message contains text content.
-
-    This filter returns True if the incoming event is a Message and has a non-empty text field.
-
-    Examples:
-        .. code:: python
-        
-            @router.message(IsText())
-            async def handler(msg: Message):
-                ...
-
-    Returns:
-        bool: True if the message has text, False otherwise.
     """
 
     async def __call__(self, event: Any) -> bool:
-        if not isinstance(event, Message):
-            return False
-
-        return event.text is not None
+        return getattr(event, "text", None) is not None
 
 
 class IsDocument(Filter):
     """
     Filter to check if the message contains a document.
-
-    This filter returns True if the incoming event is a Message and has a document attached.
-
-    Examples:
-        .. code:: python
-            @router.message(IsDocument())
-            async def handler(msg: Message):
-                ...
-
-    Returns:
-        bool: True if the message has a document, False otherwise.
     """
 
     async def __call__(self, event: Any) -> bool:
-        if not isinstance(event, Message):
-            return False
-
-        return event.document is not None
+        return getattr(event, "document", None) is not None
 
 
 class IsGift(Filter):
     """
     Filter to check if the message contains a gift packet.
-
-    This filter returns True if the incoming event is a Message and has a gift field.
-
-    Examples:
-        .. code:: python
-            @router.message(IsGift())
-            async def handler(msg: Message):
-                ...
-
-    Returns:
-        bool: True if the message has a gift, False otherwise.
     """
 
     async def __call__(self, event: Any) -> bool:
-        if not isinstance(event, Message):
-            return False
-
-        return event.gift is not None
+        return getattr(event, "gift", None) is not None
 
 
 class IsMedia(Filter):
     """
     Filter to check if the message contains any media (photo, document, audio, video, voice, gif).
     """
+
     async def __call__(self, event: Any) -> bool:
-        if not isinstance(event, Message):
-            return False
-        return event.document is not None
+        return getattr(event, "document", None) is not None

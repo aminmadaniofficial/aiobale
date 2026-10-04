@@ -1,7 +1,9 @@
 from __future__ import annotations
-from typing import Any, Sequence, Union
+from typing import Any, Sequence, Union, TYPE_CHECKING
 from .base import Filter
-from ..types import Message
+
+if TYPE_CHECKING:
+    from ..types.message import Message
 
 
 class TextEquals(Filter):
@@ -13,9 +15,10 @@ class TextEquals(Filter):
         self.ignore_case = ignore_case
 
     async def __call__(self, event: Any) -> bool:
-        if not isinstance(event, Message) or not event.text:
+        text = getattr(event, "text", None) if not isinstance(event, str) else event
+        if not text:
             return False
-        text = event.text.lower() if self.ignore_case else event.text
+        text = text.lower() if self.ignore_case else text
         return text in self.texts
 
 
@@ -28,9 +31,10 @@ class TextContains(Filter):
         self.ignore_case = ignore_case
 
     async def __call__(self, event: Any) -> bool:
-        if not isinstance(event, Message) or not event.text:
+        text = getattr(event, "text", None) if not isinstance(event, str) else event
+        if not text:
             return False
-        text = event.text.lower() if self.ignore_case else event.text
+        text = text.lower() if self.ignore_case else text
         return any(sub in text for sub in self.substrings)
 
 
@@ -43,9 +47,10 @@ class TextStartsWith(Filter):
         self.ignore_case = ignore_case
 
     async def __call__(self, event: Any) -> bool:
-        if not isinstance(event, Message) or not event.text:
+        text = getattr(event, "text", None) if not isinstance(event, str) else event
+        if not text:
             return False
-        text = event.text.lower() if self.ignore_case else event.text
+        text = text.lower() if self.ignore_case else text
         return text.startswith(self.prefixes)
 
 
@@ -58,7 +63,8 @@ class TextEndsWith(Filter):
         self.ignore_case = ignore_case
 
     async def __call__(self, event: Any) -> bool:
-        if not isinstance(event, Message) or not event.text:
+        text = getattr(event, "text", None) if not isinstance(event, str) else event
+        if not text:
             return False
-        text = event.text.lower() if self.ignore_case else event.text
+        text = text.lower() if self.ignore_case else text
         return text.endswith(self.suffixes)
