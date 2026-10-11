@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from pydantic import Field
+from pydantic import Field, ConfigDict
 from typing import TYPE_CHECKING, Union
 
 from .base import BaleObject
@@ -15,6 +15,13 @@ class Thumbnail(BaleObject):
     - A URL (if the image is hosted remotely)
     - Raw bytes (if embedded directly in the structure)
     """
+
+    model_config = ConfigDict(
+        populate_by_name=True,
+        use_enum_values=True,
+        extra="ignore",
+        arbitrary_types_allowed=True,
+    )
 
     w: int = Field(..., alias="1")
     """Width of the thumbnail in pixels."""

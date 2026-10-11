@@ -156,3 +156,69 @@ def test_message_data_tombstone_defaults():
     assert msg_data.date == 0
     assert msg_data.content is None
 
+
+def test_document_message_sanitization_and_caption():
+    from aiobale.types import DocumentMessage
+
+    raw_doc = {
+        "1": 123456,
+        "2": 789012,
+        "3": 1024,
+        "4": "photo.jpg",
+        "5": "image/jpeg",
+        "8": {"1": "old caption"},
+        "9": b"\x80\xff invalid utf-8",
+        "10": "internal server metadata",
+        "11": 99999,
+    }
+
+    doc = DocumentMessage.model_validate(raw_doc)
+    assert doc.file_id == 123456
+    assert doc.caption.content == "old caption"
+
+    # Dump must not contain fields 9, 10, 11
+    dumped = doc.model_dump(by_alias=True, exclude_none=True)
+    assert "9" not in dumped
+    assert "10" not in dumped
+    assert "11" not in dumped
+
+    # Test with_caption
+    new_doc = doc.with_caption("Updated caption text")
+    assert new_doc.caption.content == "Updated caption text"
+    assert new_doc.file_id == 123456
+    assert new_doc.access_hash == 789012
+    new_dumped = new_doc.model_dump(by_alias=True, exclude_none=True)
+    assert "9" not in new_dumped
+
+
+def test_other_message_timestamp_only():
+    from aiobale.types import OtherMessage
+
+    raw = {"1": 1780652534717}
+    msg = OtherMessage.model_validate(raw)
+    assert msg.date == 1780652534717
+    assert msg.message_id is None
+
+
+def test_inline_keyboard_nested_dictionary():
+    from aiobale.types import InlineKeyboardMarkup
+
+    nested_dict = {
+        "1": {
+            "1": {
+                "1": {
+                    "1": {"1": "Bale Channel", "2": "https://ble.ir/channel"},
+                    "2": {"1": "Click Here", "3": "btn_callback"},
+                }
+            }
+        }
+    }
+
+    markup = InlineKeyboardMarkup.model_validate(nested_dict)
+    assert len(markup.inline_keyboard) == 1
+    assert len(markup.inline_keyboard[0]) == 2
+    assert markup.inline_keyboard[0][0].text == "Bale Channel"
+    assert markup.inline_keyboard[0][0].url == "https://ble.ir/channel"
+    assert markup.inline_keyboard[0][1].text == "Click Here"
+    assert markup.inline_keyboard[0][1].callback_data == "btn_callback"
+

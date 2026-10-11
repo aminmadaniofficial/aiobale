@@ -110,50 +110,40 @@ class InlineKeyboardMarkup(BaleObject):
     @model_validator(mode="before")
     @classmethod
     def validate_keyboard(cls, data: Any) -> Any:
-        if isinstance(data, list):
-            # 2D list of button dicts or InlineKeyboardButton instances
-            formatted_rows = []
-            for row in data:
-                if isinstance(row, list):
-                    btn_row = []
-                    for b in row:
-                        if isinstance(b, InlineKeyboardButton):
-                            btn_row.append(b)
-                        elif isinstance(b, dict):
-                            btn_row.append(InlineKeyboardButton.model_validate(b))
-                        else:
-                            btn_row.append(InlineKeyboardButton(text=str(b)))
-                    formatted_rows.append(btn_row)
-                elif isinstance(row, (dict, InlineKeyboardButton)):
-                    b = row if isinstance(row, InlineKeyboardButton) else InlineKeyboardButton.model_validate(row)
-                    formatted_rows.append([b])
-            return {"1": formatted_rows}
+        def _parse_button(b: Any) -> InlineKeyboardButton:
+            if isinstance(b, InlineKeyboardButton):
+                return b
+            if isinstance(b, dict):
+                return InlineKeyboardButton.model_validate(b)
+            return InlineKeyboardButton(text=str(b))
+
+        def _parse_row(r: Any) -> List[InlineKeyboardButton]:
+            if isinstance(r, list):
+                return [_parse_button(b) for b in r]
+            if isinstance(r, dict):
+                if "1" in r and isinstance(r["1"], (list, dict)):
+                    inner = r["1"]
+                    if isinstance(inner, dict):
+                        if all(isinstance(v, dict) for v in inner.values()):
+                            return [_parse_button(b) for b in inner.values()]
+                        return [_parse_button(inner)]
+                    elif isinstance(inner, list):
+                        return [_parse_button(b) for b in inner]
+                return [_parse_button(r)]
+            return [_parse_button(r)]
 
         if isinstance(data, dict):
             if "inline_keyboard" in data:
-                return cls.validate_keyboard(data["inline_keyboard"])
-            if "1" in data and isinstance(data["1"], list):
-                raw_buttons = data["1"]
-                keyboard_rows = []
-                for row in raw_buttons:
-                    if isinstance(row, dict) and "1" in row:
-                        buttons_data = row["1"]
-                        if isinstance(buttons_data, list):
-                            btns = [
-                                InlineKeyboardButton.model_validate(b) if isinstance(b, dict) else b
-                                for b in buttons_data
-                            ]
-                            keyboard_rows.append(btns)
-                        elif isinstance(buttons_data, dict):
-                            btn = InlineKeyboardButton.model_validate(buttons_data)
-                            keyboard_rows.append([btn])
-                    elif isinstance(row, list):
-                        btns = [
-                            InlineKeyboardButton.model_validate(b) if isinstance(b, dict) else b
-                            for b in row
-                        ]
-                        keyboard_rows.append(btns)
-                return {"1": keyboard_rows}
+                data = data["inline_keyboard"]
+            elif "1" in data:
+                data = data["1"]
+
+        if isinstance(data, dict):
+            data = list(data.values())
+
+        if isinstance(data, list):
+            formatted_rows = [_parse_row(r) for r in data]
+            return {"1": formatted_rows}
 
         return data
 

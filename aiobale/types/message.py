@@ -638,15 +638,32 @@ class Message(BaleObject):
             reply_markup=reply_markup,
         )
 
-    async def edit_text(self, text: str) -> DefaultResponse:
+    async def edit_text(
+        self, text: str, is_caption: Optional[bool] = None
+    ) -> DefaultResponse:
         """
-        Edit the content of this message.
+        Edit the content of this message (or its caption if it is a media message).
         """
+        should_caption = is_caption if is_caption is not None else (self.document is not None)
         return await self.client.edit_message(
             text=text,
             message_id=self.message_id,
             chat_id=self.chat.id,
             chat_type=self.chat.type,
+            is_caption=should_caption,
+            document=self.document,
+        )
+
+    async def edit_caption(self, caption: str) -> DefaultResponse:
+        """
+        Edit the caption of this media message.
+        """
+        return await self.client.edit_caption(
+            caption=caption,
+            message_id=self.message_id,
+            chat_id=self.chat.id,
+            chat_type=self.chat.type,
+            document=self.document,
         )
 
     async def delete(self, just_me: Optional[bool] = False) -> DefaultResponse:

@@ -30,7 +30,7 @@ from types import TracebackType
 from contextlib import asynccontextmanager, suppress
 
 from .session import AiohttpSession, BaseSession
-from ..exceptions import AiobaleError
+from ..exceptions import AiobaleError, BaleError
 from ..utils import parse_jwt, generate_id, clean_grpc, extract_join_token
 from ..methods import (
     SendMessage,
@@ -1125,17 +1125,76 @@ class Client:
         peer_type = self._resolve_peer_type(chat.type)
         return Peer(id=chat.id, type=peer_type)
 
-    async def edit_message(
-        self, text: str, message_id: int, chat_id: int, chat_type: ChatType
+    async def edit_caption(
+        self,
+        caption: str,
+        message_id: int,
+        chat_id: int,
+        chat_type: ChatType,
+        document: Optional[DocumentMessage] = None,
     ) -> DefaultResponse:
         """
-        Edits the content of an existing message.
+        Edits the caption of an existing media message (photo, video, document, etc.).
 
         Args:
-            text (str): The new message text.
+            caption (str): The new caption text.
             message_id (int): The ID of the message to edit.
             chat_id (int): The chat ID containing the message.
             chat_type (aiobale.enums.ChatType): The type of chat.
+            document (Optional[aiobale.types.DocumentMessage]): Existing document content.
+                If not provided, the client attempts to resolve it from recent chat history.
+
+        Returns:
+            aiobale.types.responses.DefaultResponse: The result of the update operation.
+
+        Raises:
+            BaleError: If the server returns an error during editing.
+            AiobaleError: If the message cannot be resolved or is not a media message.
+        """
+        peer_type = self._resolve_peer_type(chat_type)
+        peer = Peer(type=peer_type, id=chat_id)
+
+        doc_to_use = document
+        if doc_to_use is None:
+            # Try to resolve message from recent chat history
+            history = await self.load_history(chat_id=chat_id, chat_type=chat_type, limit=50)
+            for msg in history:
+                if msg.message_id == message_id:
+                    if msg.content and msg.content.document:
+                        doc_to_use = msg.content.document
+                    break
+
+        if doc_to_use is None:
+            raise AiobaleError(
+                f"Could not find media message with ID {message_id} in chat {chat_id} to edit its caption. "
+                "Provide the 'document' parameter explicitly."
+            )
+
+        sanitized_doc = doc_to_use.with_caption(caption)
+        content = MessageContent(document=sanitized_doc)
+        call = UpdateMessage(peer=peer, message_id=message_id, updated_message=content)
+        return await self(call)
+
+    async def edit_message(
+        self,
+        text: str,
+        message_id: int,
+        chat_id: int,
+        chat_type: ChatType,
+        is_caption: bool = False,
+        document: Optional[DocumentMessage] = None,
+    ) -> DefaultResponse:
+        """
+        Edits the content of an existing message. Supports text messages and automatically
+        falls back to editing media captions if the target message contains media.
+
+        Args:
+            text (str): The new message text or caption.
+            message_id (int): The ID of the message to edit.
+            chat_id (int): The chat ID containing the message.
+            chat_type (aiobale.enums.ChatType): The type of chat.
+            is_caption (bool, optional): If True, directly edits media caption. Defaults to False.
+            document (Optional[aiobale.types.DocumentMessage], optional): Document object if known.
 
         Returns:
             aiobale.types.responses.DefaultResponse: The result of the edit operation.
@@ -1144,13 +1203,33 @@ class Client:
             BaleError: If the server returns an error during editing.
             AiobaleError: For client-side errors.
         """
+        if is_caption or document is not None:
+            return await self.edit_caption(
+                caption=text,
+                message_id=message_id,
+                chat_id=chat_id,
+                chat_type=chat_type,
+                document=document,
+            )
+
         peer_type = self._resolve_peer_type(chat_type)
         peer = Peer(type=peer_type, id=chat_id)
         content = MessageContent(text=TextMessage(value=text))
-
         call = UpdateMessage(peer=peer, message_id=message_id, updated_message=content)
 
-        return await self(call)
+        try:
+            return await self(call)
+        except BaleError as e:
+            err_msg = str(e).lower()
+            if "cannot replace media message with text" in err_msg or "updatemessagedenied" in err_msg:
+                return await self.edit_caption(
+                    caption=text,
+                    message_id=message_id,
+                    chat_id=chat_id,
+                    chat_type=chat_type,
+                    document=document,
+                )
+            raise
 
     async def delete_messages(
         self,

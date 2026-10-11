@@ -12,10 +12,10 @@ class OtherMessage(BaleObject):
     carrying just enough metadata to identify and order it.
     """
 
-    date: int = Field(..., alias="1")
+    date: Optional[int] = Field(None, alias="1")
     """The timestamp of the message in **milliseconds** since epoch."""
 
-    message_id: int = Field(..., alias="2")
+    message_id: Optional[int] = Field(None, alias="2")
     """Unique identifier of the message in the conversation."""
 
     seq: Optional[int] = Field(None, alias="3")
@@ -25,8 +25,8 @@ class OtherMessage(BaleObject):
         def __init__(
             __pydantic__self__,
             *,
-            date: int,
-            message_id: int,
+            date: Optional[int] = None,
+            message_id: Optional[int] = None,
             seq: Optional[int] = None,
             **__pydantic_kwargs
         ) -> None:

@@ -1,12 +1,22 @@
 from __future__ import annotations
 
-from pydantic import Field
+from pydantic import Field, ConfigDict
 from typing import TYPE_CHECKING, Optional
 
 from .base import BaleObject
 
 
-class PhotoExt(BaleObject):
+class BaseFileExt(BaleObject):
+    """Base class for document extension metadata ignoring undocumented protobuf fields."""
+    model_config = ConfigDict(
+        populate_by_name=True,
+        use_enum_values=True,
+        extra="ignore",
+        arbitrary_types_allowed=True,
+    )
+
+
+class PhotoExt(BaseFileExt):
     """
     Metadata extension for a photo file.
 
@@ -30,7 +40,7 @@ class PhotoExt(BaleObject):
             super().__init__(w=w, h=h, **__pydantic_kwargs)
 
 
-class VideoExt(BaleObject):
+class VideoExt(BaseFileExt):
     """
     Metadata extension for a video file.
 
@@ -58,7 +68,7 @@ class VideoExt(BaleObject):
             super().__init__(w=w, h=h, duration=duration, **__pydantic_kwargs)
 
 
-class VoiceExt(BaleObject):
+class VoiceExt(BaseFileExt):
     """
     Metadata extension for a voice message.
 
@@ -78,7 +88,7 @@ class VoiceExt(BaleObject):
             super().__init__(duration=duration, **__pydantic_kwargs)
 
 
-class AudioExt(BaleObject):
+class AudioExt(BaseFileExt):
     """
     Metadata extension for an audio (music) file.
 
@@ -116,7 +126,7 @@ class AudioExt(BaleObject):
             )
 
 
-class DocumentsExt(BaleObject):
+class DocumentsExt(BaseFileExt):
     """
     Collection of optional metadata extensions for various document types.
 

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from pydantic import Field, model_validator
+from pydantic import Field, model_validator, ConfigDict
 from typing import Any, Optional, Union, TYPE_CHECKING, List, Dict
 
 from .base import BaleObject
@@ -30,6 +30,13 @@ class MessageCaption(BaleObject):
     """
     Represents an optional caption attached to media messages.
     """
+
+    model_config = ConfigDict(
+        populate_by_name=True,
+        use_enum_values=True,
+        extra="ignore",
+        arbitrary_types_allowed=True,
+    )
 
     content: Optional[str] = Field(None, alias="1")
     """The caption text."""
@@ -67,6 +74,13 @@ class DocumentMessage(BaleObject):
     Represents a document or file message content.
     """
 
+    model_config = ConfigDict(
+        populate_by_name=True,
+        use_enum_values=True,
+        extra="ignore",
+        arbitrary_types_allowed=True,
+    )
+
     file_id: int = Field(..., alias="1")
     """Unique file identifier."""
 
@@ -92,6 +106,37 @@ class DocumentMessage(BaleObject):
 
     caption: Optional[MessageCaption] = Field(None, alias="8")
     """Caption associated with the document message."""
+
+    def with_caption(
+        self, caption: Optional[Union[str, MessageCaption]]
+    ) -> DocumentMessage:
+        """
+        Returns a sanitized copy of this DocumentMessage with an updated caption.
+        Safely strips internal server-only fields (e.g. 9, 10, 11) to avoid gRPC unmarshal errors.
+        """
+        cap_obj: Optional[MessageCaption] = None
+        if isinstance(caption, str):
+            if self.caption is not None:
+                cap_obj = MessageCaption(
+                    content=caption,
+                    mentions=self.caption.mentions,
+                    ext=self.caption.ext,
+                )
+            else:
+                cap_obj = MessageCaption(content=caption)
+        elif isinstance(caption, MessageCaption):
+            cap_obj = caption
+
+        return DocumentMessage(
+            file_id=self.file_id,
+            access_hash=self.access_hash,
+            size=self.size,
+            name=self.name,
+            mime_type=self.mime_type,
+            thumb=self.thumb,
+            ext=self.ext,
+            caption=cap_obj,
+        )
 
     if TYPE_CHECKING:
 
